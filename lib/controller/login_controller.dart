@@ -1,5 +1,6 @@
-import 'dart:convert';
+//
 
+import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
@@ -12,26 +13,21 @@ class LoginController extends GetxController {
 
   final String apiUrl = "https://dummyjson.com/auth/login";
 
+  // Method to validate email
   bool isValidEmail() {
     return email.value.isNotEmpty && email.value.contains('@');
   }
 
+  // Method to validate password
   bool isValidPassword() {
     return password.value.length >= 6;
   }
 
+  // Login method to call the API
   Future<void> login() async {
     isLoading.value = true;
 
-    if (email.value == 'test@example.com' && password.value == 'password123') {
-      isLoading.value = false;
-      Get.offNamed('/home'); // Navigate to the homepage after successful login
-    } else {
-      isLoading.value = false;
-      errorMessage.value = 'Invalid email or password';
-    }
-
-    // Check if the email and password are valid
+    // Validate email and password first
     if (!isValidEmail() || !isValidPassword()) {
       errorMessage.value = 'Invalid email or password';
       isLoading.value = false;
