@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       home: SplashScreen(),
       getPages: [
         GetPage(name: '/splash', page: () => SplashScreen()),
-        GetPage(name: '/login', page: () => LoginPage()),
+        GetPage(name: '/login', page: () => Loginpage()),
         GetPage(name: '/home', page: () => HomePage()),
       ],
     );
