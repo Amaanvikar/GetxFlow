@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:getxflow/common/widget/bottom_nav.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -19,6 +20,7 @@ class HomePage extends StatelessWidget {
           children: [Text('This is an HomeScreen')],
         ),
       ),
+      bottomNavigationBar: const BottomNavigation(),
     );
   }
 }
