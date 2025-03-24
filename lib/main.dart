@@ -3,7 +3,10 @@ import 'package:get/get.dart';
 // import 'package:get_storage/get_storage.dart';
 import 'package:getxflow/screens/home.dart';
 import 'package:getxflow/screens/login.dart';
+import 'package:getxflow/screens/otp_screen.dart';
+import 'package:getxflow/screens/profile_screen.dart';
 import 'package:getxflow/screens/splash.dart';
+import 'package:getxflow/screens/user_registeration_screen.dart';
 
 void main() async {
   // await GetStorage.init();
@@ -20,8 +23,13 @@ class MyApp extends StatelessWidget {
       home: SplashScreen(),
       getPages: [
         GetPage(name: '/splash', page: () => SplashScreen()),
-        GetPage(name: '/login', page: () => Loginpage()),
+        GetPage(name: '/login', page: () => LoginPage()),
+        GetPage(name: '/otp', page: () => OtpScreen()),
+        GetPage(name: '/register', page: () => UserRegistrationPage()),
         GetPage(name: '/home', page: () => HomePage()),
+        GetPage(name: '/profile', page: () => UserProfilePage()),
+
+        // GetPage(name: '/search', page: () => SearchScreen()),
       ],
     );
   }

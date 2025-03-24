@@ -27,10 +27,13 @@ class BottomNavigation extends StatelessWidget {
               Get.toNamed('/notifications');
               break;
             case 3:
-              Get.toNamed('/profile');
+              Get.toNamed('/settings');
+
               break;
             case 4:
-              Get.toNamed('/settings');
+              if (Get.currentRoute != '/profile') {
+                Get.toNamed('/profile');
+              }
               break;
             default:
               Get.toNamed('/home');

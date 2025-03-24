@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:getxflow/controller/login_controller.dart';
+import 'package:getxflow/screens/profile_screen.dart';
 
-class Loginpage extends StatefulWidget {
-  const Loginpage({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  State<Loginpage> createState() => _LoginpageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginpageState extends State<Loginpage> {
+class _LoginPageState extends State<LoginPage> {
   final formKey = GlobalKey<FormState>();
 
   @override
@@ -25,50 +26,61 @@ class _LoginpageState extends State<Loginpage> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
-      body: Form(
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Form(
+          key: formKey, // Associate the formKey with the Form widget
           child: Column(
             children: [
-              TextField(
-                controller: controller.emailController.value,
+              // Mobile Number Input
+              TextFormField(
+                controller: controller.mobileController.value,
                 decoration: InputDecoration(
-                    labelText: 'Email id',
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10))),
+                  labelText: 'Enter Mobile Number',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter valid mobile number';
+                  } else if (value.length != 10) {
+                    return 'Please enter a valid 10-digit mobile number';
+                  }
+                  return null;
+                },
+                keyboardType: TextInputType.phone,
               ),
-              const SizedBox(
-                height: 10,
-              ),
-              TextField(
-                controller: controller.passwordController.value,
-                decoration: InputDecoration(
-                    labelText: 'Password',
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10))),
-              ),
-              const SizedBox(
-                height: 30,
-              ),
+              const SizedBox(height: 30),
+
+              // Submit Button
               Obx(() {
                 return ElevatedButton(
                   onPressed: () {
-                    controller.loginApi();
+                    if (formKey.currentState?.validate() ?? false) {
+                      controller.loginApi();
+                    } else {
+                      Get.snackbar(
+                        'Validation Failed',
+                        'Please enter a valid 10-digit mobile number',
+                        snackPosition: SnackPosition.BOTTOM,
+                        backgroundColor: Colors.white,
+                        colorText: Colors.black,
+                      );
+                    }
                   },
                   child: controller.isloading.value
                       ? CircularProgressIndicator()
-                      : Container(
-                          height: 40,
-                          width: 40,
-                          child: Center(
-                            child: Text(
-                              'Submit',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
+                      : Text(
+                          'Submit',
+                          style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                 );
-              })
+              }),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                  onPressed: () => Get.toNamed('/register'),
+                  child: Text('registration')),
             ],
           ),
         ),
