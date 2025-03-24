@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:getxflow/screens/driver_ride_list_screen.dart';
 // import 'package:get_storage/get_storage.dart';
 import 'package:getxflow/screens/home.dart';
 import 'package:getxflow/screens/login.dart';
@@ -26,7 +27,8 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/login', page: () => LoginPage()),
         GetPage(name: '/otp', page: () => OtpScreen()),
         GetPage(name: '/register', page: () => UserRegistrationPage()),
-        GetPage(name: '/home', page: () => HomePage()),
+
+        GetPage(name: '/home', page: () => DriverRideListScreen()),
         GetPage(name: '/profile', page: () => UserProfilePage()),
 
         // GetPage(name: '/search', page: () => SearchScreen()),

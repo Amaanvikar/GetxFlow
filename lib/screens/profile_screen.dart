@@ -33,7 +33,7 @@ class UserProfilePageState extends State<UserProfilePage> {
   void _logout() {
     // Clear stored user data (e.g., SharedPreferences or GetStorage)
     // For example, clear controller or local data.
-    controller.mobileController.value.clear();
+    controller.emailController.value.clear();
 
     // Navigate back to the Login screen
     Get.offAllNamed('/login'); // Navigate to Login page
@@ -88,9 +88,9 @@ class UserProfilePageState extends State<UserProfilePage> {
             const SizedBox(height: 20),
             // User email display
             Text(
-              controller.mobileController.value.text.isEmpty
+              controller.emailController.value.text.isEmpty
                   ? 'No email provided'
-                  : 'Number: ${controller.mobileController.value.text}',
+                  : 'Number: ${controller.emailController.value.text}',
               style: TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 20),

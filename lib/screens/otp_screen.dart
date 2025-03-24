@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -83,12 +82,14 @@ class _OtpScreenState extends State<OtpScreen> {
                   labelText: 'OTP'),
             ),
             SizedBox(height: 20),
-            Obx(() => ElevatedButton(
-                  onPressed: isLoading.value ? null : verifyOtp,
-                  child: isLoading.value
-                      ? CircularProgressIndicator()
-                      : Text('Verify OTP'),
-                )),
+            Obx(
+              () => ElevatedButton(
+                onPressed: isLoading.value ? null : verifyOtp,
+                child: isLoading.value
+                    ? CircularProgressIndicator()
+                    : Text('Verify OTP'),
+              ),
+            ),
           ],
         ),
       ),

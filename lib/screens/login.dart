@@ -32,24 +32,42 @@ class _LoginPageState extends State<LoginPage> {
           key: formKey, // Associate the formKey with the Form widget
           child: Column(
             children: [
-              // Mobile Number Input
               TextFormField(
-                controller: controller.mobileController.value,
+                controller: controller.emailController.value,
+                keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
-                  labelText: 'Enter Mobile Number',
+                  labelText: 'Enter Email id',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter valid mobile number';
-                  } else if (value.length != 10) {
-                    return 'Please enter a valid 10-digit mobile number';
+                    return 'Please enter valid Email id';
+                  }
+
+                  return null;
+                },
+              ),
+              const SizedBox(height: 10),
+              TextFormField(
+                controller: controller.passwordController.value,
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+                  labelText: 'Enter Login Pass',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your password';
+                  }
+                  if (value.length < 6) {
+                    return 'Password must be at least 6 characters';
                   }
                   return null;
                 },
-                keyboardType: TextInputType.phone,
               ),
               const SizedBox(height: 30),
 
@@ -77,10 +95,6 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                 );
               }),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                  onPressed: () => Get.toNamed('/register'),
-                  child: Text('registration')),
             ],
           ),
         ),

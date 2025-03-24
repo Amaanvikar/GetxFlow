@@ -4,16 +4,19 @@ import 'package:get/get.dart';
 import 'package:http/http.dart';
 
 class LoginController extends GetxController {
-  final mobileController = TextEditingController().obs;
+  final emailController = TextEditingController().obs;
+  final passwordController = TextEditingController().obs;
   RxBool isloading = false.obs;
 
   Future<void> loginApi() async {
     isloading.value = true;
     try {
       final response = await post(
-        Uri.parse("https://windhans.com/2022/hrcabs/userLoginOTP"),
+        Uri.parse("https://windhans.com/2022/hrcabs/driverLogin"),
         body: {
-          'reg_mobile': mobileController.value.text,
+          'login_name': emailController.value.text,
+          'login_pass': passwordController.value.text,
+          'notification_token': '',
         },
       );
 
@@ -25,19 +28,17 @@ class LoginController extends GetxController {
 
       // Check if response is successful and contains the required data
       if (response.statusCode == 200 && data['result'] == true) {
-        print('OTP Sent, navigating to OTP Screen.');
+        //print('OTP Sent, navigating to OTP Screen.'); // Navigate to OTP Screen and pass mobile number
+        // Get.toNamed('/otp', arguments: {
+        //   'mobile': mobileController.value.text,
+        // });
 
-        // Navigate to OTP Screen and pass mobile number
-        Get.toNamed('/otp', arguments: {
-          'mobile': mobileController.value.text,
-        });
+        // Get.snackbar('OTP Sent', data['reason'],
+        //     snackPosition: SnackPosition.BOTTOM);
 
-        Get.snackbar('OTP Sent', data['reason'],
-            snackPosition: SnackPosition.BOTTOM);
-
-        // print('Login Successful, navigating to Home Page.');
-        // Get.snackbar('Login Successful', data['reason']); // Show OTP reason
-        // Get.toNamed('/home'); // Navigate to home screen
+        print('Login Successful, navigating to Home Page.');
+        Get.snackbar('Login Successful', data['reason']); // Show OTP reason
+        Get.toNamed('/home'); // Navigate to home screen
       } else {
         print('Login Failed: ${data['reason']}');
         Get.snackbar('Login Failed', data['reason'] ?? 'Unknown Error');
