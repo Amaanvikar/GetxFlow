@@ -18,7 +18,7 @@ class RideRequest {
   String returnDatetime;
   String tripType;
   String bookingDatetime;
-  String isBooked;
+  int isBooked;
   String vdLogId;
   String driverId;
   String vehicleId;
@@ -198,7 +198,7 @@ class RideRequest {
       returnDatetime: map['return_datetime'],
       tripType: map['trip_type'],
       bookingDatetime: map['booking_datetime'],
-      isBooked: map['is_booked'],
+      isBooked: int.parse(map['is_booked'].toString()),
       vdLogId: map['vd_log_id'],
       driverId: map['driver_id'],
       vehicleId: map['vehicle_id'],
@@ -270,6 +270,28 @@ class RideRequest {
       isReturn: map['is_return'],
       costingDetail: CostingDetail.fromMap(map['costing_detail']),
     );
+  }
+
+// Function to get the status based on isBooked value
+  String get getbookingStatus {
+    switch (isBooked) {
+      case 0:
+        return 'Pending';
+      case 1:
+        return 'Scheduled';
+      case 2:
+        return 'Started';
+      case 3:
+        return 'Ended';
+      case 4:
+        return 'Canceled';
+      case 5:
+        return 'All';
+      case 6:
+        return 'Driver Arriving';
+      default:
+        return 'Unknown';
+    }
   }
 
   Map<String, dynamic> toMap() {

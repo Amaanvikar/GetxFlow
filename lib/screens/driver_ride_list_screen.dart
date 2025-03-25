@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:getxflow/common/widget/bottom_nav.dart';
 import 'package:getxflow/controller/driver_ride_controller.dart';
 
 class DriverRideListScreen extends StatefulWidget {
@@ -50,16 +51,9 @@ class _DriverRideListScreenState extends State<DriverRideListScreen> {
           // ListView displaying filtered rides
           Expanded(
             child: Obx(() {
-              if (controller.isLoading.value) {
-                return Center(child: CircularProgressIndicator());
-              }
-
-              if (controller.filteredRideList.isEmpty) {
-                return Center(child: Text("No rides available."));
-              }
-
               return ListView.builder(
-                itemCount: controller.filteredRideList.length,
+                itemCount:
+                    controller.filteredRideList.length, // Use filtered list
                 itemBuilder: (context, index) {
                   var ride = controller.filteredRideList[index];
 
@@ -67,8 +61,10 @@ class _DriverRideListScreenState extends State<DriverRideListScreen> {
                     elevation: 4,
                     margin: EdgeInsets.all(10),
                     child: ListTile(
-                      title: Text("Ride No: ${ride.rideBookingNumber}",
-                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      title: Text(
+                        "Ride No: ${ride.rideBookingNumber}",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -76,18 +72,29 @@ class _DriverRideListScreenState extends State<DriverRideListScreen> {
                           Text("Drop: ${ride.dropLocation}"),
                           Text("Status: ${ride.bookingStatus}",
                               style: TextStyle(
-                                  color: ride.bookingStatus == "Completed"
+                                  color: ride.isBooked == 3
                                       ? Colors.green
-                                      : Colors.red)),
+                                      : ride.isBooked == 4
+                                          ? Colors.red
+                                          : Colors.orange)),
                         ],
                       ),
-                      trailing: Icon(Icons.directions_car, color: Colors.blue),
+                      trailing: GestureDetector(
+                        onTap: () {
+                          print("Ride ID: ${ride.rideBookingNumber}");
+                        },
+                        child: Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          color: Colors.blue,
+                        ),
+                      ),
                     ),
                   );
                 },
               );
             }),
           ),
+
           // Obx(() {
           //   return ListView.builder(
           //     itemCount: controller.rideList.length,
@@ -120,6 +127,7 @@ class _DriverRideListScreenState extends State<DriverRideListScreen> {
           // }),
         ],
       ),
+      bottomNavigationBar: const BottomNavigation(),
     );
   }
 }

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:getxflow/controller/login_controller.dart';
-import 'package:getxflow/screens/profile_screen.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -13,11 +11,16 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final formKey = GlobalKey<FormState>();
+  final LoginController controller = Get.put(LoginController());
+
+  @override
+  void initState() {
+    super.initState();
+    controller.checkUserSession();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final LoginController controller = Get.put(LoginController());
-
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -33,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             children: [
               TextFormField(
-                controller: controller.emailController.value,
+                controller: controller.emailController,
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                   labelText: 'Enter Email id',
@@ -51,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               const SizedBox(height: 10),
               TextFormField(
-                controller: controller.passwordController.value,
+                controller: controller.passwordController,
                 keyboardType: TextInputType.text,
                 decoration: InputDecoration(
                   labelText: 'Enter Login Pass',
