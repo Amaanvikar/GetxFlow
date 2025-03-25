@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:getxflow/common/widget/bottom_nav.dart';
 import 'package:getxflow/controller/user_profile_controller.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -43,12 +44,15 @@ class UserProfilePageState extends State<UserProfilePage> {
         centerTitle: true,
         title:
             Text('User Profile', style: TextStyle(fontWeight: FontWeight.bold)),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.exit_to_app),
-            onPressed: _logout,
-          ),
-        ],
+        leading:
+            BackButton(onPressed: () => Get.back()), // Uses system behavior
+
+        // actions: [
+        //   IconButton(
+        //     icon: Icon(Icons.arrow_back_sharp),
+        //     onPressed: () => Get.back(),
+        //   ),
+        // ],
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
@@ -75,7 +79,7 @@ class UserProfilePageState extends State<UserProfilePage> {
                       backgroundImage: _profileImage != null
                           ? FileImage(_profileImage!) as ImageProvider
                           : NetworkImage(
-                              "https://windhans.com/2022/hrcabs/uploads/${profile.profileImage}"),
+                              "https://img.freepik.com/premium-vector/avatar-profile-icon-flat-style-female-user-profile-vector-illustration-isolated-background-women-profile-sign-business-concept_157943-38866.jpg?semt=ais_hybrid}"),
                       backgroundColor: Colors.grey[300],
                     ),
                     Positioned(
@@ -126,6 +130,7 @@ class UserProfilePageState extends State<UserProfilePage> {
           ),
         );
       }),
+      bottomNavigationBar: const BottomNavigation(),
     );
   }
 

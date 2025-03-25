@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getxflow/controller/bottom_nav_controller.dart';
@@ -21,19 +20,16 @@ class BottomNavigation extends StatelessWidget {
               Get.toNamed('/home');
               break;
             case 1:
-              Get.toNamed('/search');
+              Get.toNamed('/list');
               break;
             case 2:
               Get.toNamed('/notifications');
               break;
             case 3:
               Get.toNamed('/settings');
-
               break;
             case 4:
-              if (Get.currentRoute != '/profile') {
-                Get.toNamed('/profile');
-              }
+              Get.toNamed('/profile');
               break;
             default:
               Get.toNamed('/home');
@@ -50,8 +46,8 @@ class BottomNavigation extends StatelessWidget {
             label: 'home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'search',
+            icon: Icon(Icons.view_list),
+            label: 'Listing',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.notification_add),
