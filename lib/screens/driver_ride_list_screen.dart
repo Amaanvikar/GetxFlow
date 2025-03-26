@@ -125,37 +125,6 @@ class _DriverRideListScreenState extends State<DriverRideListScreen> {
               );
             }),
           ),
-
-          // Obx(() {
-          //   return ListView.builder(
-          //     itemCount: controller.rideList.length,
-          //     itemBuilder: (context, index) {
-          //       var ride = controller.rideList[index];
-          //       return Card(
-          //         elevation: 4,
-          //         margin: EdgeInsets.all(10),
-          //         child: ListTile(
-          //           title: Text(
-          //             "is_booking",
-          //             style: TextStyle(fontWeight: FontWeight.bold),
-          //           ),
-          //           subtitle: Column(
-          //             crossAxisAlignment: CrossAxisAlignment.start,
-          //             children: [
-          //               Text("Pending: "),
-          //               Text("Scheduled: "),
-          //               Text("Started: "),
-          //               Text("Ended: "),
-          //               Text("Cancelled: "),
-          //               Text("All: "),
-          //               Text("Driver Arriving: "),
-          //             ],
-          //           ),
-          //         ),
-          //       );
-          //     },
-          //   );
-          // }),
         ],
       ),
     );

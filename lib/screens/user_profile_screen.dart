@@ -5,6 +5,7 @@ import 'package:getxflow/common/widget/bottom_nav.dart';
 import 'package:getxflow/controller/bottom_nav_controller.dart';
 import 'package:getxflow/controller/user_profile_controller.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserProfilePage extends StatefulWidget {
   const UserProfilePage({super.key});
@@ -38,9 +39,12 @@ class UserProfilePageState extends State<UserProfilePage> {
     }
   }
 
-  void _logout() {
-    controller.driverProfile.value = null;
-    Get.offAllNamed('/login');
+  // Logout function to clear session
+  Future<void> logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear(); // Clears all stored session data
+    Get.offAllNamed(
+        '/login'); // Navigate to login screen and remove all previous routes
   }
 
   @override
@@ -122,7 +126,7 @@ class UserProfilePageState extends State<UserProfilePage> {
 
               // Logout Button
               ElevatedButton(
-                onPressed: _logout,
+                onPressed: logout,
                 child: Text('Logout'),
               ),
             ],
