@@ -14,6 +14,12 @@ class LoginController extends GetxController {
   var driverProfile = Rxn<DriverProfile>();
   var isloading = false.obs;
 
+  @override
+  void onInit() {
+    super.onInit();
+    checkUserSession();
+  }
+
   Future<void> loginApi() async {
     isloading.value = true;
     try {

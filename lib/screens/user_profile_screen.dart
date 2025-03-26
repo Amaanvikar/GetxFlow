@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getxflow/common/widget/bottom_nav.dart';
+import 'package:getxflow/controller/bottom_nav_controller.dart';
 import 'package:getxflow/controller/user_profile_controller.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -14,6 +15,11 @@ class UserProfilePage extends StatefulWidget {
 
 class UserProfilePageState extends State<UserProfilePage> {
   final UserProfileController controller = Get.put(UserProfileController());
+
+  // Fetch the existing BottomNavController instance
+  final BottomNavController bottomNavController =
+      Get.find<BottomNavController>();
+
   File? _profileImage;
 
   @override
@@ -44,20 +50,13 @@ class UserProfilePageState extends State<UserProfilePage> {
         centerTitle: true,
         title:
             Text('User Profile', style: TextStyle(fontWeight: FontWeight.bold)),
-        leading:
-            BackButton(onPressed: () => Get.back()), // Uses system behavior
-
-        // actions: [
-        //   IconButton(
-        //     icon: Icon(Icons.arrow_back_sharp),
-        //     onPressed: () => Get.back(),
-        //   ),
-        // ],
+        leading: BackButton(onPressed: () {
+          bottomNavController.selectedIndex.value = 0;
+          Get.back();
+        }), // Uses system behavior
       ),
       body: Obx(() {
-        if (controller.isLoading.value) {
-          return Center(child: CircularProgressIndicator());
-        }
+        if (controller.isLoading.value) {}
 
         final profile = controller.driverProfile.value;
         if (profile == null) {

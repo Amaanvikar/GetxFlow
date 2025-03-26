@@ -12,6 +12,9 @@ class DriverRideController extends GetxController {
   var isLoading = true.obs;
   var isBooking = true.obs;
 
+  var showFilters = false.obs;
+  var searchQuery = ''.obs;
+
   @override
   void onInit() {
     fetchDriverRides();
@@ -55,5 +58,13 @@ class DriverRideController extends GetxController {
       filteredRideList.assignAll(
           rideList.where((ride) => ride.bookingStatus == status).toList());
     }
+  }
+
+  void toggleFilters() {
+    showFilters.value = !showFilters.value;
+  }
+
+  void updateSearchQuery(String query) {
+    searchQuery.value = query;
   }
 }

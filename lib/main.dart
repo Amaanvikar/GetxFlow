@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:getxflow/controller/bottom_nav_controller.dart';
 import 'package:getxflow/controller/login_controller.dart';
 import 'package:getxflow/screens/driver_ride_list_screen.dart';
 import 'package:getxflow/screens/home.dart';
@@ -12,6 +13,7 @@ import 'package:getxflow/screens/user_registeration_screen.dart';
 void main() async {
   // await GetStorage.init();
   Get.put(LoginController()); // Ensure controller is initialized
+  Get.lazyPut(() => BottomNavController()); // Ensures it's available everywhere
 
   runApp(const MyApp());
 }
@@ -28,8 +30,8 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/splash', page: () => SplashScreen()),
         GetPage(name: '/login', page: () => LoginPage()),
         GetPage(name: '/home', page: () => HomePage()),
-        GetPage(name: '/list', page: () => DriverRideListScreen()),
-        GetPage(name: '/register', page: () => UserRegistrationPage()),
+        GetPage(name: '/booking', page: () => DriverRideListScreen()),
+        GetPage(name: '/event', page: () => UserRegistrationPage()),
         GetPage(name: '/profile', page: () => UserProfilePage()),
 
         // GetPage(name: '/search', page: () => SearchScreen()),

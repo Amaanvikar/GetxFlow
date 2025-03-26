@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getxflow/common/widget/bottom_nav.dart';
+import 'package:getxflow/controller/bottom_nav_controller.dart';
 import 'package:getxflow/controller/driver_ride_controller.dart';
 
 class DriverRideListScreen extends StatefulWidget {
@@ -12,6 +13,8 @@ class DriverRideListScreen extends StatefulWidget {
 
 class _DriverRideListScreenState extends State<DriverRideListScreen> {
   final DriverRideController controller = Get.put(DriverRideController());
+  final BottomNavController bottomNavController =
+      Get.find<BottomNavController>();
 
   // List of status options
   final List<String> statusOptions = [
@@ -23,10 +26,38 @@ class _DriverRideListScreenState extends State<DriverRideListScreen> {
     'Canceled'
   ];
 
+  Widget buildSearchAndFilter() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          Expanded(
+              child: Obx(() => Text(
+                  'Showing results for: ${controller.searchQuery.value}'))),
+          const SizedBox(width: 10),
+          IconButton(
+            icon: Icon(Icons.filter_list,
+                color:
+                    controller.showFilters.value ? Colors.green : Colors.grey),
+            onPressed: controller.toggleFilters,
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Driver Rides")),
+      bottomNavigationBar: const BottomNavigation(),
+      appBar: AppBar(
+        title:
+            Text("Driver Rides", style: TextStyle(fontWeight: FontWeight.bold)),
+        leading: BackButton(onPressed: () {
+          bottomNavController.selectedIndex.value = 0;
+          Get.back();
+        }),
+      ),
       body: Column(
         children: [
           // DropdownButton for status selection
@@ -127,7 +158,6 @@ class _DriverRideListScreenState extends State<DriverRideListScreen> {
           // }),
         ],
       ),
-      bottomNavigationBar: const BottomNavigation(),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getxflow/controller/bottom_nav_controller.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class BottomNavigation extends StatelessWidget {
   const BottomNavigation({super.key});
@@ -20,15 +21,12 @@ class BottomNavigation extends StatelessWidget {
               Get.toNamed('/home');
               break;
             case 1:
-              Get.toNamed('/list');
+              Get.toNamed('/booking');
               break;
             case 2:
-              Get.toNamed('/notifications');
+              Get.toNamed('/event');
               break;
             case 3:
-              Get.toNamed('/settings');
-              break;
-            case 4:
               Get.toNamed('/profile');
               break;
             default:
@@ -36,30 +34,32 @@ class BottomNavigation extends StatelessWidget {
               break;
           }
         },
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.grey,
         type: BottomNavigationBarType
             .fixed, // This ensures the labels are always visible
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'home',
+            icon: SvgPicture.asset(controller.selectedIndex.value == 0
+                ? 'assets/images/img_nav_home_selected.svg'
+                : 'assets/images/img_nav_home.svg'),
+            label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.view_list),
-            label: 'Listing',
+            icon: SvgPicture.asset(controller.selectedIndex.value == 1
+                ? 'assets/images/img_nav_booking_selected.svg'
+                : 'assets/images/img_nav_booking.svg'),
+            label: 'Booking',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.notification_add),
-            label: 'notification',
+            icon: SvgPicture.asset(controller.selectedIndex.value == 2
+                ? 'assets/images/img_nav_event_selected.svg'
+                : 'assets/images/img_nav_event.svg'),
+            label: 'Event',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'settings',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle),
-            label: 'profile',
+            icon: SvgPicture.asset(controller.selectedIndex.value == 3
+                ? 'assets/images/img_nav_profile_selected.svg'
+                : 'assets/images/img_nav_profile.svg'),
+            label: 'Profile',
           ),
         ],
       );
