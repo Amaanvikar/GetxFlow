@@ -2,8 +2,9 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:getxflow/models/user_profile_model.dart';
+import 'package:getxflow/screens/home.dart';
 import 'package:getxflow/screens/login.dart';
-import 'package:getxflow/screens/user_profile_screen.dart';
+import 'package:getxflow/screens/splash.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -81,7 +82,7 @@ class LoginController extends GetxController {
     print("Stored Token (reg_id as fallback): $token"); // Debugging
 
     if (token != null && token.isNotEmpty) {
-      Get.offAll(() => UserProfilePage());
+      Get.offAll(() => HomePage());
     } else {
       print("User not logged in.");
     }

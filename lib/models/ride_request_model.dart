@@ -1,180 +1,176 @@
 class RideRequest {
-  String rideRequestId;
-  String rideBookingNumber;
-  String userId;
-  String pickupLocation;
+  String? rideRequestId;
+  String? rideBookingNumber;
+  String? userId;
+  String? pickupLocation;
   String? pickupCity;
-  String pickupLat;
-  String pickupLong;
-  String dropLocation;
-  String dropCity;
-  String dropLat;
-  String dropLong;
-  String mapImage;
-  String totalKm;
-  String totalMin;
-  String approximateTotalAmount;
-  String pickupDatetime;
-  String returnDatetime;
-  String tripType;
-  String bookingDatetime;
-  int isBooked;
-  String vdLogId;
-  String driverId;
-  String vehicleId;
-  String segmentId;
-  String assignedSegmentId;
-  String isRideNow;
-  String rideReturnLogId;
-  String isDeleted;
-  String isRideNotificationSendToDriver;
-  String rideAssignToAdmin;
-  String isSosAlert;
+  String? pickupLat;
+  String? pickupLong;
+  String? dropLocation;
+  String? dropCity;
+  String? dropLat;
+  String? dropLong;
+  String? mapImage;
+  String? totalKm;
+  String? totalMin;
+  String? approximateTotalAmount;
+  String? pickupDatetime;
+  String? returnDatetime;
+  String? tripType;
+  String? bookingDatetime;
+  int? isBooked;
+  String? vdLogId;
+  String? driverId;
+  String? vehicleId;
+  String? segmentId;
+  String? assignedSegmentId;
+  String? isRideNow;
+  String? rideReturnLogId;
+  String? isDeleted;
+  String? isRideNotificationSendToDriver;
+  String? rideAssignToAdmin;
+  String? isSosAlert;
   String? sosBy;
-  String sosLat;
-  String sosLong;
-  String rideDetailId;
-  String rideId;
-  String rideStartLat;
-  String rideStartLong;
-  String rideStartLocation;
-  String rideStartCity;
-  String rideEndCity;
-  String rideStartMeterReading;
-  String rideStartMeterReadingImg;
-  String rideStartTime;
-  String rideEndLat;
-  String rideEndLong;
-  String rideEndLocation;
-  String rideEndMeterReading;
-  String rideEndMeterReadingImg;
-  String rideEndTime;
-  String totalRideKm;
-  String totalRideTime;
-  String totalRideAmount;
-  String amountFromWallet;
-  String rideIsCompleted;
-  String ridePaymentStatus;
-  String driverNeedReturnTrip;
-  String driverReturnTripCity;
-  String createdOn;
-  String tripId;
-  String userFullName;
-  String driverFullName;
-  String ownerFullName;
-  String userMobile;
-  String driverProfilePic;
-  String driverMobile;
-  String ownerProfilePic;
-  String ownerMobile;
+  String? sosLat;
+  String? sosLong;
+  String? rideDetailId;
+  String? rideId;
+  String? rideStartLat;
+  String? rideStartLong;
+  String? rideStartLocation;
+  String? rideStartCity;
+  String? rideEndCity;
+  String? rideStartMeterReading;
+  String? rideStartMeterReadingImg;
+  String? rideStartTime;
+  String? rideEndLat;
+  String? rideEndLong;
+  String? rideEndLocation;
+  String? rideEndMeterReading;
+  String? rideEndMeterReadingImg;
+  String? rideEndTime;
+  String? totalRideKm;
+  String? totalRideTime;
+  String? totalRideAmount;
+  String? amountFromWallet;
+  String? rideIsCompleted;
+  String? ridePaymentStatus;
+  String? driverNeedReturnTrip;
+  String? driverReturnTripCity;
+  String? createdOn;
+  String? tripId;
+  String? userFullName;
+  String? driverFullName;
+  String? ownerFullName;
+  String? userMobile;
+  String? driverProfilePic;
+  String? driverMobile;
+  String? ownerProfilePic;
+  String? ownerMobile;
   String? vehicleImage;
-  String vehicleModelId;
-  String vehicleRegistrationNo;
-  String noOfTripRemain;
-  String chargeableAmount;
-  String noOfTripGiven;
-  String modelName;
-  String brandId;
-  String modelImage;
-  String brandName;
-  String segmentName;
-  String segmentImage;
+  String? vehicleModelId;
+  String? vehicleRegistrationNo;
+  String? noOfTripRemain;
+  String? chargeableAmount;
+  String? noOfTripGiven;
+  String? modelName;
+  String? brandId;
+  String? modelImage;
+  String? brandName;
+  String? segmentName;
+  String? segmentImage;
   String? driverReview;
-  String driverRating;
-  String driverAverageRating;
-  String bookingStatus;
-  List<RideAdvance> advanceDetail;
-  bool isReturn;
-  CostingDetail costingDetail;
+  String? driverRating;
+  String? driverAverageRating;
+  String? bookingStatus;
+  bool? isReturn;
 
   RideRequest({
-    required this.rideRequestId,
-    required this.rideBookingNumber,
-    required this.userId,
-    required this.pickupLocation,
+    this.rideRequestId,
+    this.rideBookingNumber,
+    this.userId,
+    this.pickupLocation,
     this.pickupCity,
-    required this.pickupLat,
-    required this.pickupLong,
-    required this.dropLocation,
-    required this.dropCity,
-    required this.dropLat,
-    required this.dropLong,
-    required this.mapImage,
-    required this.totalKm,
-    required this.totalMin,
-    required this.approximateTotalAmount,
-    required this.pickupDatetime,
-    required this.returnDatetime,
-    required this.tripType,
-    required this.bookingDatetime,
-    required this.isBooked,
-    required this.vdLogId,
-    required this.driverId,
-    required this.vehicleId,
-    required this.segmentId,
-    required this.assignedSegmentId,
-    required this.isRideNow,
-    required this.rideReturnLogId,
-    required this.isDeleted,
-    required this.isRideNotificationSendToDriver,
-    required this.rideAssignToAdmin,
-    required this.isSosAlert,
+    this.pickupLat,
+    this.pickupLong,
+    this.dropLocation,
+    this.dropCity,
+    this.dropLat,
+    this.dropLong,
+    this.mapImage,
+    this.totalKm,
+    this.totalMin,
+    this.approximateTotalAmount,
+    this.pickupDatetime,
+    this.returnDatetime,
+    this.tripType,
+    this.bookingDatetime,
+    this.isBooked,
+    this.vdLogId,
+    this.driverId,
+    this.vehicleId,
+    this.segmentId,
+    this.assignedSegmentId,
+    this.isRideNow,
+    this.rideReturnLogId,
+    this.isDeleted,
+    this.isRideNotificationSendToDriver,
+    this.rideAssignToAdmin,
+    this.isSosAlert,
     this.sosBy,
-    required this.sosLat,
-    required this.sosLong,
-    required this.rideDetailId,
-    required this.rideId,
-    required this.rideStartLat,
-    required this.rideStartLong,
-    required this.rideStartLocation,
-    required this.rideStartCity,
-    required this.rideEndCity,
-    required this.rideStartMeterReading,
-    required this.rideStartMeterReadingImg,
-    required this.rideStartTime,
-    required this.rideEndLat,
-    required this.rideEndLong,
-    required this.rideEndLocation,
-    required this.rideEndMeterReading,
-    required this.rideEndMeterReadingImg,
-    required this.rideEndTime,
-    required this.totalRideKm,
-    required this.totalRideTime,
-    required this.totalRideAmount,
-    required this.amountFromWallet,
-    required this.rideIsCompleted,
-    required this.ridePaymentStatus,
-    required this.driverNeedReturnTrip,
-    required this.driverReturnTripCity,
-    required this.createdOn,
-    required this.tripId,
-    required this.userFullName,
-    required this.driverFullName,
-    required this.ownerFullName,
-    required this.userMobile,
-    required this.driverProfilePic,
-    required this.driverMobile,
-    required this.ownerProfilePic,
-    required this.ownerMobile,
+    this.sosLat,
+    this.sosLong,
+    this.rideDetailId,
+    this.rideId,
+    this.rideStartLat,
+    this.rideStartLong,
+    this.rideStartLocation,
+    this.rideStartCity,
+    this.rideEndCity,
+    this.rideStartMeterReading,
+    this.rideStartMeterReadingImg,
+    this.rideStartTime,
+    this.rideEndLat,
+    this.rideEndLong,
+    this.rideEndLocation,
+    this.rideEndMeterReading,
+    this.rideEndMeterReadingImg,
+    this.rideEndTime,
+    this.totalRideKm,
+    this.totalRideTime,
+    this.totalRideAmount,
+    this.amountFromWallet,
+    this.rideIsCompleted,
+    this.ridePaymentStatus,
+    this.driverNeedReturnTrip,
+    this.driverReturnTripCity,
+    this.createdOn,
+    this.tripId,
+    this.userFullName,
+    this.driverFullName,
+    this.ownerFullName,
+    this.userMobile,
+    this.driverProfilePic,
+    this.driverMobile,
+    this.ownerProfilePic,
+    this.ownerMobile,
     this.vehicleImage,
-    required this.vehicleModelId,
-    required this.vehicleRegistrationNo,
-    required this.noOfTripRemain,
-    required this.chargeableAmount,
-    required this.noOfTripGiven,
-    required this.modelName,
-    required this.brandId,
-    required this.modelImage,
-    required this.brandName,
-    required this.segmentName,
-    required this.segmentImage,
+    this.vehicleModelId,
+    this.vehicleRegistrationNo,
+    this.noOfTripRemain,
+    this.chargeableAmount,
+    this.noOfTripGiven,
+    this.modelName,
+    this.brandId,
+    this.modelImage,
+    this.brandName,
+    this.segmentName,
+    this.segmentImage,
     this.driverReview,
-    required this.driverRating,
-    required this.driverAverageRating,
-    required this.bookingStatus,
-    required this.advanceDetail,
-    required this.isReturn,
-    required this.costingDetail,
+    this.driverRating,
+    this.driverAverageRating,
+    this.bookingStatus,
+    this.isReturn,
   });
 
   factory RideRequest.fromMap(Map<String, dynamic> map) {
@@ -198,7 +194,9 @@ class RideRequest {
       returnDatetime: map['return_datetime'],
       tripType: map['trip_type'],
       bookingDatetime: map['booking_datetime'],
-      isBooked: int.parse(map['is_booked'].toString()),
+      isBooked: map['is_booked'] != null
+          ? int.parse(map['is_booked'].toString())
+          : null,
       vdLogId: map['vd_log_id'],
       driverId: map['driver_id'],
       vehicleId: map['vehicle_id'],
@@ -262,36 +260,10 @@ class RideRequest {
       segmentImage: map['segment_image'],
       driverReview: map['driver_review'],
       driverRating: map['driver_rating'],
-      driverAverageRating: map['driverAverageRating'],
+      driverAverageRating: map['driver_average_rating'],
       bookingStatus: map['booking_status'],
-      advanceDetail: (map['advance_detail'] as List)
-          .map((item) => RideAdvance.fromMap(item))
-          .toList(),
       isReturn: map['is_return'],
-      costingDetail: CostingDetail.fromMap(map['costing_detail']),
     );
-  }
-
-// Function to get the status based on isBooked value
-  String get getbookingStatus {
-    switch (isBooked) {
-      case 0:
-        return 'Pending';
-      case 1:
-        return 'Scheduled';
-      case 2:
-        return 'Started';
-      case 3:
-        return 'Ended';
-      case 4:
-        return 'Canceled';
-      case 5:
-        return 'All';
-      case 6:
-        return 'Driver Arriving';
-      default:
-        return 'Unknown';
-    }
   }
 
   Map<String, dynamic> toMap() {
@@ -378,139 +350,9 @@ class RideRequest {
       'segment_image': segmentImage,
       'driver_review': driverReview,
       'driver_rating': driverRating,
-      'driverAverageRating': driverAverageRating,
+      'driver_average_rating': driverAverageRating,
       'booking_status': bookingStatus,
-      'advance_detail': advanceDetail.map((item) => item.toMap()).toList(),
       'is_return': isReturn,
-      'costing_detail': costingDetail.toMap(),
-    };
-  }
-}
-
-class RideAdvance {
-  String rideAdvanceId;
-  String rideId;
-  String rideDetailId;
-  String advanceAmount;
-  String paymentType;
-  String paidOn;
-
-  RideAdvance({
-    required this.rideAdvanceId,
-    required this.rideId,
-    required this.rideDetailId,
-    required this.advanceAmount,
-    required this.paymentType,
-    required this.paidOn,
-  });
-
-  factory RideAdvance.fromMap(Map<String, dynamic> map) {
-    return RideAdvance(
-      rideAdvanceId: map['ride_advance_id'],
-      rideId: map['ride_id'],
-      rideDetailId: map['ride_detail_id'],
-      advanceAmount: map['advance_amount'],
-      paymentType: map['payment_type'],
-      paidOn: map['paid_on'],
-    );
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'ride_advance_id': rideAdvanceId,
-      'ride_id': rideId,
-      'ride_detail_id': rideDetailId,
-      'advance_amount': advanceAmount,
-      'payment_type': paymentType,
-      'paid_on': paidOn,
-    };
-  }
-}
-
-class CostingDetail {
-  String rideCostingId;
-  String rideId;
-  String baseCharges;
-  String kmCharges;
-  String minCharges;
-  String commissionCharges;
-  String discountCharges;
-  String total;
-  String actualBilling;
-  String halfBilling;
-  String gst;
-  String grandTotal;
-  String customerBill;
-  String commissionGst;
-  String adminCommission;
-  String ownerNetEarnings;
-  String perTripCharge;
-  String tripType;
-
-  CostingDetail({
-    required this.rideCostingId,
-    required this.rideId,
-    required this.baseCharges,
-    required this.kmCharges,
-    required this.minCharges,
-    required this.commissionCharges,
-    required this.discountCharges,
-    required this.total,
-    required this.actualBilling,
-    required this.halfBilling,
-    required this.gst,
-    required this.grandTotal,
-    required this.customerBill,
-    required this.commissionGst,
-    required this.adminCommission,
-    required this.ownerNetEarnings,
-    required this.perTripCharge,
-    required this.tripType,
-  });
-
-  factory CostingDetail.fromMap(Map<String, dynamic> map) {
-    return CostingDetail(
-      rideCostingId: map['ride_costing_id'],
-      rideId: map['ride_id'],
-      baseCharges: map['base_charges'],
-      kmCharges: map['km_charges'],
-      minCharges: map['min_charges'],
-      commissionCharges: map['commission_charges'],
-      discountCharges: map['discount_charges'],
-      total: map['total'],
-      actualBilling: map['actual_billing'],
-      halfBilling: map['half_billing'],
-      gst: map['gst'],
-      grandTotal: map['grand_total'],
-      customerBill: map['customer_bill'],
-      commissionGst: map['commission_gst'],
-      adminCommission: map['admin_commission'],
-      ownerNetEarnings: map['owner_net_earnings'],
-      perTripCharge: map['per_trip_charge'],
-      tripType: map['trip_type'],
-    );
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'ride_costing_id': rideCostingId,
-      'ride_id': rideId,
-      'base_charges': baseCharges,
-      'km_charges': kmCharges,
-      'min_charges': minCharges,
-      'commission_charges': commissionCharges,
-      'discount_charges': discountCharges,
-      'total': total,
-      'actual_billing': actualBilling,
-      'half_billing': halfBilling,
-      'gst': gst,
-      'grand_total': grandTotal,
-      'customer_bill': customerBill,
-      'commission_gst': commissionGst,
-      'admin_commission': adminCommission,
-      'owner_net_earnings': ownerNetEarnings,
-      'per_trip_charge': perTripCharge,
-      'trip_type': tripType,
     };
   }
 }

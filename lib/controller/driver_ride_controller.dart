@@ -7,13 +7,13 @@ class DriverRideController extends GetxController {
   var rideList = <RideRequest>[].obs;
   var filteredRideList =
       <RideRequest>[].obs; // List to store filtered rides based on status
-  var selectedStatus = 'All'.obs; // Default value is 'All'
-
+  var selectedStatus = '5'.obs;
   var isLoading = true.obs;
   var isBooking = true.obs;
 
   var showFilters = false.obs;
   var searchQuery = ''.obs;
+  var allRides = <RideRequest>[].obs;
 
   @override
   void onInit() {
@@ -22,16 +22,27 @@ class DriverRideController extends GetxController {
   }
 
   void fetchDriverRides() async {
+    String status = selectedStatus.value.toString();
+    print("Fetching rides for status: ${selectedStatus.value}");
+
+    filteredRideList.value = allRides.where((ride) {
+      String bookingStatus = ride.bookingStatus.toString();
+      return bookingStatus == status || status == '5';
+    }).toList();
+
+    print("Filtered List Length: ${filteredRideList.length}");
+
     try {
       isLoading(true);
       var url = Uri.parse("https://windhans.com/2022/hrcabs/getDriverRideList");
       var response = await http.post(url, body: {
         'driver_id': '8',
-        'is_book': '3',
+        'is_book': selectedStatus.value.toString(),
         'page': '1',
       });
 
       if (response.statusCode == 200) {
+        print("API Response: ${response.body}");
         var data = json.decode(response.body);
         if (data['result'] == true && data['rides'] != null) {
           var rides = List<RideRequest>.from(

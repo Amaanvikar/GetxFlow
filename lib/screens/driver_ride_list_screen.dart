@@ -16,15 +16,16 @@ class _DriverRideListScreenState extends State<DriverRideListScreen> {
   final BottomNavController bottomNavController =
       Get.find<BottomNavController>();
 
-  // List of status options
-  final List<String> statusOptions = [
-    'All',
-    'Pending',
-    'Scheduled',
-    'Started',
-    'Ended',
-    'Canceled'
-  ];
+  // Status Mapping
+  final Map<String, String> statusMap = {
+    'All': '5',
+    'Pending': '0',
+    'Scheduled': '1',
+    'Started': '2',
+    'Ended': '3',
+    'Cancelled': '4',
+    'Driver Arriving': '6',
+  };
 
   Widget buildSearchAndFilter() {
     return Padding(
@@ -63,30 +64,37 @@ class _DriverRideListScreenState extends State<DriverRideListScreen> {
           // DropdownButton for status selection
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: DropdownButton<String>(
-              value: controller.selectedStatus.value,
-              items: statusOptions.map((String status) {
-                return DropdownMenuItem<String>(
-                  value: status,
-                  child: Text(status),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
-                if (newValue != null) {
-                  controller.selectedStatus.value = newValue;
-                  controller.filterRides(newValue);
-                }
-              },
-            ),
+            child: Obx(() {
+              return DropdownButton<String>(
+                value: statusMap.keys.firstWhere(
+                  (key) => statusMap[key] == controller.selectedStatus.value,
+                  orElse: () => 'All', // Default to "All" if no match
+                ),
+                items: statusMap.keys.map((String status) {
+                  return DropdownMenuItem<String>(
+                    value: status,
+                    child: Text(status),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  if (newValue != null) {
+                    controller.selectedStatus.value = statusMap[newValue]!;
+                    print(
+                        "Selected Status: ${controller.selectedStatus.value}");
+
+                    controller.fetchDriverRides();
+                  }
+                },
+              );
+            }),
           ),
           // ListView displaying filtered rides
           Expanded(
             child: Obx(() {
               return ListView.builder(
-                itemCount:
-                    controller.filteredRideList.length, // Use filtered list
+                itemCount: controller.rideList.length,
                 itemBuilder: (context, index) {
-                  var ride = controller.filteredRideList[index];
+                  var ride = controller.rideList[index];
 
                   return Card(
                     elevation: 4,
