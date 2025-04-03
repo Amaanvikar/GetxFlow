@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:getxflow/common/widget/bottom_nav.dart';
 import 'package:getxflow/controller/bottom_nav_controller.dart';
 import 'package:getxflow/controller/driver_ride_controller.dart';
+import 'package:getxflow/screens/ride_list_details_screen.dart';
 
 class DriverRideListScreen extends StatefulWidget {
   const DriverRideListScreen({super.key});
@@ -52,6 +53,7 @@ class _DriverRideListScreenState extends State<DriverRideListScreen> {
     return Scaffold(
       bottomNavigationBar: const BottomNavigation(),
       appBar: AppBar(
+        centerTitle: true,
         title:
             Text("Driver Rides", style: TextStyle(fontWeight: FontWeight.bold)),
         leading: BackButton(onPressed: () {
@@ -120,6 +122,12 @@ class _DriverRideListScreenState extends State<DriverRideListScreen> {
                       ),
                       trailing: GestureDetector(
                         onTap: () {
+                          Get.to(
+                            RideListDetailsScreen(
+                              ride: controller.rideList[index],
+                            ),
+                            arguments: ride,
+                          );
                           print("Ride ID: ${ride.rideBookingNumber}");
                         },
                         child: Icon(

@@ -3,12 +3,12 @@ import 'package:get/get.dart';
 import 'package:getxflow/controller/bottom_nav_controller.dart';
 import 'package:getxflow/controller/login_controller.dart';
 import 'package:getxflow/screens/driver_ride_list_screen.dart';
+import 'package:getxflow/screens/events_screen.dart';
 import 'package:getxflow/screens/home.dart';
 // import 'package:get_storage/get_storage.dart';
 import 'package:getxflow/screens/login.dart';
 import 'package:getxflow/screens/user_profile_screen.dart';
 import 'package:getxflow/screens/splash.dart';
-import 'package:getxflow/screens/user_registeration_screen.dart';
 
 void main() async {
   // await GetStorage.init();
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/login', page: () => LoginPage()),
         GetPage(name: '/home', page: () => HomePage()),
         GetPage(name: '/booking', page: () => DriverRideListScreen()),
-        GetPage(name: '/event', page: () => UserRegistrationPage()),
+        GetPage(name: '/event', page: () => EventScreen()),
         GetPage(name: '/profile', page: () => UserProfilePage()),
 
         // GetPage(name: '/search', page: () => SearchScreen()),

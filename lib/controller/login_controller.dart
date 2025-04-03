@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:getxflow/models/user_profile_model.dart';
 import 'package:getxflow/screens/home.dart';
 import 'package:getxflow/screens/login.dart';
-import 'package:getxflow/screens/splash.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
