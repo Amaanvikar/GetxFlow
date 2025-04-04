@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/instance_manager.dart';
 import 'package:get/route_manager.dart';
@@ -30,10 +31,16 @@ class _EventScreenState extends State<EventScreen> {
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
-        leading: BackButton(onPressed: () {
-          bottomNavController.selectedIndex.value = 0;
-          Get.offAll(HomeScreen());
-        }),
+        leading: IconButton(
+            icon: SvgPicture.asset(
+              'assets/images/img_ic_down.svg',
+              height: 24,
+              width: 24,
+            ),
+            onPressed: () {
+              bottomNavController.selectedIndex.value = 0;
+              Get.offAll(() => HomeScreen());
+            }),
       ),
       body: Center(
         child: Obx(

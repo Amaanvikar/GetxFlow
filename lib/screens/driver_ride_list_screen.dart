@@ -61,10 +61,16 @@ class _DriverRideListScreenState extends State<DriverRideListScreen> {
         centerTitle: true,
         title: const Text("Driver Rides",
             style: TextStyle(fontWeight: FontWeight.bold)),
-        leading: BackButton(onPressed: () {
-          bottomNavController.selectedIndex.value = 0;
-          Get.off(HomeScreen());
-        }),
+        leading: IconButton(
+            icon: SvgPicture.asset(
+              'assets/images/img_ic_down.svg',
+              height: 24,
+              width: 24,
+            ),
+            onPressed: () {
+              bottomNavController.selectedIndex.value = 0;
+              Get.offAll(() => HomeScreen());
+            }),
       ),
       body: Column(
         children: [

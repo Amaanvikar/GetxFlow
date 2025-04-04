@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:getxflow/common/widget/bottom_nav.dart';
 import 'package:getxflow/controller/bottom_nav_controller.dart';
@@ -56,10 +57,16 @@ class UserProfilePageState extends State<UserProfilePage> {
         centerTitle: true,
         title:
             Text('User Profile', style: TextStyle(fontWeight: FontWeight.bold)),
-        leading: BackButton(onPressed: () {
-          bottomNavController.selectedIndex.value = 0;
-          Get.offAll(HomeScreen());
-        }), // Uses system behavior
+        leading: IconButton(
+            icon: SvgPicture.asset(
+              'assets/images/img_ic_down.svg',
+              height: 24,
+              width: 24,
+            ),
+            onPressed: () {
+              bottomNavController.selectedIndex.value = 0;
+              Get.offAll(() => HomeScreen());
+            }),
       ),
       body: Obx(() {
         if (controller.isLoading.value) {}

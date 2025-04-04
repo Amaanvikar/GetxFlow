@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:getxflow/models/ride_request_model.dart';
 
 class RideListDetailsScreen extends StatelessWidget {
@@ -13,6 +16,14 @@ class RideListDetailsScreen extends StatelessWidget {
         centerTitle: true,
         title:
             Text('Ride Details', style: TextStyle(fontWeight: FontWeight.bold)),
+        leading: IconButton(
+          icon: SvgPicture.asset(
+            'assets/images/img_ic_down.svg',
+            height: 24,
+            width: 24,
+          ),
+          onPressed: () => Get.back(),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
