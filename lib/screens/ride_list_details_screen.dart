@@ -69,16 +69,19 @@ Widget _buildRow(String title, String value) {
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        SizedBox(
+          width: 100,
+          child: Text(
+            title,
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+          ),
         ),
-        SizedBox(width: 6),
+        Spacer(),
         Expanded(
           child: Text(
             value,
             style: TextStyle(fontSize: 14),
-            overflow: TextOverflow.ellipsis,
+            overflow: TextOverflow.visible,
           ),
         ),
       ],
