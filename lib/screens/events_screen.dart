@@ -3,7 +3,10 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/instance_manager.dart';
 import 'package:get/route_manager.dart';
 import 'package:getxflow/common/widget/bottom_nav.dart';
+import 'package:getxflow/controller/bottom_nav_controller.dart';
 import 'package:getxflow/controller/event_screen_controller.dart';
+import 'package:getxflow/screens/driver_ride_list_screen.dart';
+import 'package:getxflow/screens/homescreen.dart';
 
 class EventScreen extends StatefulWidget {
   const EventScreen({super.key});
@@ -14,6 +17,8 @@ class EventScreen extends StatefulWidget {
 
 class _EventScreenState extends State<EventScreen> {
   final EventScreenController _controller = Get.put(EventScreenController());
+  final BottomNavController bottomNavController =
+      Get.find<BottomNavController>();
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +31,10 @@ class _EventScreenState extends State<EventScreen> {
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
+        leading: BackButton(onPressed: () {
+          bottomNavController.selectedIndex.value = 0;
+          Get.offAll(HomeScreen());
+        }),
       ),
       body: Center(
         child: Obx(

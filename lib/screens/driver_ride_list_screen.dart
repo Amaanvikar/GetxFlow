@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:getxflow/common/widget/bottom_nav.dart';
 import 'package:getxflow/controller/bottom_nav_controller.dart';
 import 'package:getxflow/controller/driver_ride_controller.dart';
+import 'package:getxflow/screens/homescreen.dart';
 import 'package:getxflow/screens/ride_list_details_screen.dart';
 
 class DriverRideListScreen extends StatefulWidget {
@@ -62,7 +63,7 @@ class _DriverRideListScreenState extends State<DriverRideListScreen> {
             style: TextStyle(fontWeight: FontWeight.bold)),
         leading: BackButton(onPressed: () {
           bottomNavController.selectedIndex.value = 0;
-          Get.back();
+          Get.off(HomeScreen());
         }),
       ),
       body: Column(

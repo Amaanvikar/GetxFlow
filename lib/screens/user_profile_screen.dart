@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:getxflow/common/widget/bottom_nav.dart';
 import 'package:getxflow/controller/bottom_nav_controller.dart';
 import 'package:getxflow/controller/user_profile_controller.dart';
+import 'package:getxflow/screens/homescreen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -56,7 +57,7 @@ class UserProfilePageState extends State<UserProfilePage> {
             Text('User Profile', style: TextStyle(fontWeight: FontWeight.bold)),
         leading: BackButton(onPressed: () {
           bottomNavController.selectedIndex.value = 0;
-          Get.back();
+          Get.offAll(HomeScreen());
         }), // Uses system behavior
       ),
       body: Obx(() {
