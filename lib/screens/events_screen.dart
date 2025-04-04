@@ -5,7 +5,6 @@ import 'package:get/route_manager.dart';
 import 'package:getxflow/common/widget/bottom_nav.dart';
 import 'package:getxflow/controller/bottom_nav_controller.dart';
 import 'package:getxflow/controller/event_screen_controller.dart';
-import 'package:getxflow/screens/driver_ride_list_screen.dart';
 import 'package:getxflow/screens/homescreen.dart';
 
 class EventScreen extends StatefulWidget {

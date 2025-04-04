@@ -5,6 +5,7 @@ import 'package:getxflow/common/widget/bottom_nav.dart';
 import 'package:getxflow/controller/bottom_nav_controller.dart';
 import 'package:getxflow/controller/user_profile_controller.dart';
 import 'package:getxflow/screens/homescreen.dart';
+import 'package:getxflow/screens/login.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -127,8 +128,28 @@ class UserProfilePageState extends State<UserProfilePage> {
 
               // Logout Button
               ElevatedButton(
-                onPressed: logout,
-                child: Text('Logout'),
+                onPressed: () async {
+                  bool shouldLogout =
+                      await controller.showLogoutConfirmationDialog();
+
+                  if (shouldLogout) {
+                    // Clear shared preferences and navigate to login
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    await prefs.clear();
+
+                    Get.offAll(() =>
+                        LoginPage()); // Navigate to login screen and remove all previous routes
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFB42318),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child:
+                    const Text('Logout', style: TextStyle(color: Colors.white)),
               ),
             ],
           ),
