@@ -13,8 +13,7 @@ import 'package:getxflow/screens/splash.dart';
 void main() async {
   // await GetStorage.init();
   Get.put(LoginController()); // Ensure controller is initialized
-  Get.lazyPut(() => BottomNavController()); // Ensures it's available everywhere
-
+  Get.lazyPut(() => BottomNavController());
   runApp(const MyApp());
 }
 
