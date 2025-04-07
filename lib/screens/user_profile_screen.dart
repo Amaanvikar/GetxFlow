@@ -90,9 +90,15 @@ class UserProfilePageState extends State<UserProfilePage> {
                       radius: 70,
                       backgroundImage: _profileImage != null
                           ? FileImage(_profileImage!) as ImageProvider
-                          : NetworkImage(
-                              "https://img.freepik.com/premium-vector/avatar-profile-icon-flat-style-female-user-profile-vector-illustration-isolated-background-women-profile-sign-business-concept_157943-38866.jpg?semt=ais_hybrid}"),
+                          : (profile.prof_pic.isNotEmpty
+                              ? NetworkImage(
+                                  'https://windhans.com/2022/hrcabs/images/${profile.prof_pic}')
+                              : null),
                       backgroundColor: Colors.grey[300],
+                      child: (profile.prof_pic.isEmpty && _profileImage == null)
+                          ? Icon(Icons.account_circle,
+                              size: 70, color: Colors.grey[700])
+                          : null,
                     ),
                     Positioned(
                       bottom: 0,
@@ -106,6 +112,7 @@ class UserProfilePageState extends State<UserProfilePage> {
                   ],
                 ),
               ),
+
               const SizedBox(height: 20),
 
               // User Details

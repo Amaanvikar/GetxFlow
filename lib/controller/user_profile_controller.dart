@@ -17,8 +17,6 @@ class UserProfileController extends GetxController {
         body: {'driver_id': '8'},
       );
 
-      print("Response body: ${response.body}");
-
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
 

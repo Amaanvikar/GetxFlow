@@ -23,14 +23,14 @@ class DriverRideController extends GetxController {
 
   void fetchDriverRides() async {
     String status = selectedStatus.value.toString();
-    print("Fetching rides for status: ${selectedStatus.value}");
+    // print("Fetching rides for status: ${selectedStatus.value}");
 
     filteredRideList.value = allRides.where((ride) {
       String bookingStatus = ride.bookingStatus.toString();
       return bookingStatus == status || status == '5';
     }).toList();
 
-    print("Filtered List Length: ${filteredRideList.length}");
+    // print("Filtered List Length: ${filteredRideList.length}");
 
     try {
       isLoading(true);
@@ -42,7 +42,7 @@ class DriverRideController extends GetxController {
       });
 
       if (response.statusCode == 200) {
-        print("API Response: ${response.body}");
+        // print("API Response: ${response.body}");
         var data = json.decode(response.body);
         if (data['result'] == true && data['rides'] != null) {
           var rides = List<RideRequest>.from(

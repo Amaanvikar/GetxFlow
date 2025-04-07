@@ -14,6 +14,7 @@ class DriverProfile {
   final String profileImage;
   final String vehicleModel;
   final String vehicleNumber;
+  final String prof_pic;
 
   DriverProfile({
     required this.regId,
@@ -31,6 +32,7 @@ class DriverProfile {
     required this.profileImage,
     required this.vehicleModel,
     required this.vehicleNumber,
+    required this.prof_pic,
   });
 
   factory DriverProfile.fromJson(Map<String, dynamic> json) {
@@ -50,6 +52,7 @@ class DriverProfile {
       profileImage: json['prof_pic'] ?? '',
       vehicleModel: json['vehicle_model'] ?? '',
       vehicleNumber: json['vehicle_registrationno'] ?? '',
+      prof_pic: json['prof_pic'] ?? '',
     );
   }
 }
