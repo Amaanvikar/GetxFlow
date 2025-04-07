@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:getxflow/controller/drawer_controller.dart';
+import 'package:getxflow/screens/login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DrawerWidget extends StatefulWidget {
   DrawerWidget({super.key});
@@ -9,10 +12,7 @@ class DrawerWidget extends StatefulWidget {
 }
 
 class _DrawerWidgetState extends State<DrawerWidget> {
-  final DrawerController drawerController = Get.put(DrawerController(
-    alignment: DrawerAlignment.start,
-    child: Text('null'),
-  ));
+  final DrawerLogicController controller = Get.put(DrawerLogicController());
 
   @override
   Widget build(BuildContext context) {
@@ -30,31 +30,65 @@ class _DrawerWidgetState extends State<DrawerWidget> {
           ),
           // Drawer Items
           ListTile(
-            title: Text('Home'),
-            onTap: () {
-              // Close the drawer and navigate to the home screen
-              Navigator.pop(context);
-              // Use GetX for navigation or any other navigation method
-              Get.toNamed('/home');
-            },
+            title: Text(
+              'Home',
+              style: TextStyle(fontSize: 16),
+            ),
+            leading: Icon(Icons.home),
+            onTap: () => Get.back(),
           ),
           ListTile(
-            title: Text('Profile'),
-            onTap: () {
-              // Close the drawer and navigate to the profile screen
-              Navigator.pop(context);
-              Get.toNamed('/profile');
-            },
+            title: Text(
+              'Profile',
+              style: TextStyle(fontSize: 16),
+            ),
+            leading: Icon(Icons.person),
+            onTap: () => Get.toNamed('/profile'),
           ),
           ListTile(
-            title: Text('Settings'),
-            onTap: () {
-              // Close the drawer and navigate to the settings screen
-              Navigator.pop(context);
-              Get.toNamed('/settings');
-            },
+            title: Text(
+              'Ride Booking',
+              style: TextStyle(fontSize: 16),
+            ),
+            leading: Icon(Icons.book_online),
+            onTap: () => Get.toNamed('/booking'),
           ),
-          // More Drawer Items can go here
+          ListTile(
+            title: Text(
+              'Event',
+              style: TextStyle(fontSize: 16),
+            ),
+            leading: Icon(Icons.event),
+            onTap: () => Get.toNamed('/event'),
+          ),
+          ListTile(
+            title: Text(
+              'Settings',
+              style: TextStyle(fontSize: 16),
+            ),
+            leading: Icon(Icons.settings),
+            onTap: () => Get.toNamed('/settings'),
+          ),
+          ListTile(
+              title: Text(
+                'Logout',
+                style: TextStyle(fontSize: 16),
+              ),
+              leading: Icon(Icons.logout),
+              onTap: () async {
+                bool shouldLogout =
+                    await controller.showLogoutConfirmationDialog();
+
+                if (shouldLogout) {
+                  // Clear shared preferences and navigate to login
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  await prefs.clear();
+
+                  Get.offAll(() =>
+                      LoginPage()); // Navigate to login screen and remove all previous routes
+                }
+              })
         ],
       ),
     );

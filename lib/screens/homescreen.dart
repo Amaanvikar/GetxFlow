@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getxflow/common/widget/bottom_nav.dart';
+import 'package:getxflow/common/widget/drawer_widget.dart';
 import 'package:getxflow/controller/home_screen_controller.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -10,9 +11,11 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final HomeScreenController controller = Get.put(HomeScreenController());
     return Scaffold(
+        drawer: DrawerWidget(),
         bottomNavigationBar: const BottomNavigation(),
         appBar: AppBar(
           centerTitle: true,
+          automaticallyImplyLeading: true,
           title: Obx(
             () => Text(
               controller.title.value,
