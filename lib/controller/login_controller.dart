@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getxflow/models/user_profile_model.dart';
 import 'package:getxflow/screens/homescreen.dart';
@@ -92,5 +93,29 @@ class LoginController extends GetxController {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.clear();
     Get.offAll(() => LoginPage());
+  }
+
+  Future<void> showLogoutConfirmation(BuildContext context) async {
+    bool? shouldLogout = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Confirm Logout'),
+        content: Text('Are you sure you want to logout?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text('Logout'),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldLogout == true) {
+      await logout();
+    }
   }
 }

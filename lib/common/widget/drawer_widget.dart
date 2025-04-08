@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getxflow/controller/drawer_controller.dart';
-import 'package:getxflow/screens/login.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:getxflow/controller/login_controller.dart';
 
 class DrawerWidget extends StatefulWidget {
   DrawerWidget({super.key});
@@ -13,22 +12,13 @@ class DrawerWidget extends StatefulWidget {
 
 class _DrawerWidgetState extends State<DrawerWidget> {
   final DrawerLogicController controller = Get.put(DrawerLogicController());
+  final LoginController loginController = Get.put(LoginController());
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
       child: Column(
         children: <Widget>[
-          // Drawer Header
-          // UserAccountsDrawerHeader(
-          //   accountName: Text('Aman Pathan'),
-          //   accountEmail: Text('amanp@gmail.com'),
-          //   currentAccountPicture: CircleAvatar(
-          //     backgroundColor: Colors.orange,
-          //     child: Text('A', style: TextStyle(color: Colors.white)),
-          //   ),
-          // ),
-
           Container(
             padding: EdgeInsets.symmetric(vertical: 40, horizontal: 16),
             color: Colors.white,
@@ -113,25 +103,13 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             onTap: () => Get.toNamed('/settings'),
           ),
           ListTile(
-              title: Text(
-                'Logout',
-                style: TextStyle(fontSize: 16),
-              ),
-              leading: Icon(Icons.logout),
-              onTap: () async {
-                bool shouldLogout =
-                    await controller.showLogoutConfirmationDialog();
-
-                if (shouldLogout) {
-                  // Clear shared preferences and navigate to login
-                  SharedPreferences prefs =
-                      await SharedPreferences.getInstance();
-                  await prefs.clear();
-
-                  Get.offAll(() =>
-                      LoginPage()); // Navigate to login screen and remove all previous routes
-                }
-              }),
+            title: Text(
+              'Logout',
+              style: TextStyle(fontSize: 16),
+            ),
+            leading: Icon(Icons.logout),
+            onTap: () => loginController.showLogoutConfirmation(context),
+          ),
         ],
       ),
     );
