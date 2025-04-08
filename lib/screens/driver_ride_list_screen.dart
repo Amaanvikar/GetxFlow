@@ -58,12 +58,14 @@ class _DriverRideListScreenState extends State<DriverRideListScreen> {
     return Scaffold(
       bottomNavigationBar: const BottomNavigation(),
       appBar: AppBar(
+        backgroundColor: Color(0xFFB42318),
         centerTitle: true,
         title: const Text("Driver Rides",
-            style: TextStyle(fontWeight: FontWeight.bold)),
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
         leading: IconButton(
             icon: SvgPicture.asset(
               'assets/images/img_ic_down.svg',
+              color: Colors.white,
               height: 24,
               width: 24,
             ),

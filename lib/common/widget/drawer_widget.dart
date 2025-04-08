@@ -131,7 +131,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   Get.offAll(() =>
                       LoginPage()); // Navigate to login screen and remove all previous routes
                 }
-              })
+              }),
         ],
       ),
     );

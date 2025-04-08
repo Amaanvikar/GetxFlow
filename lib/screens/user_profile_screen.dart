@@ -54,12 +54,14 @@ class UserProfilePageState extends State<UserProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color(0xFFB42318),
         centerTitle: true,
-        title:
-            Text('User Profile', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text('User Profile',
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
         leading: IconButton(
             icon: SvgPicture.asset(
               'assets/images/img_ic_down.svg',
+              color: Colors.white,
               height: 24,
               width: 24,
             ),

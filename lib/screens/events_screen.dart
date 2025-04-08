@@ -24,16 +24,18 @@ class _EventScreenState extends State<EventScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color(0xFFB42318),
         centerTitle: true,
         title: Obx(
           () => Text(
             _controller.title.value,
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
           ),
         ),
         leading: IconButton(
             icon: SvgPicture.asset(
               'assets/images/img_ic_down.svg',
+              color: Colors.white,
               height: 24,
               width: 24,
             ),

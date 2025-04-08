@@ -16,10 +16,13 @@ class HomeScreen extends StatelessWidget {
         appBar: AppBar(
           centerTitle: true,
           automaticallyImplyLeading: true,
+          backgroundColor: Color(0xFFB42318),
+          iconTheme: IconThemeData(color: Colors.white),
           title: Obx(
             () => Text(
               controller.title.value,
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style:
+                  TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
             ),
           ),
         ),

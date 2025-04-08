@@ -114,12 +114,13 @@ class _RideListDetailsScreenState extends State<RideListDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color(0xFFB42318),
         centerTitle: true,
-        title:
-            Text('Ride Details', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text('Ride Details',
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
         leading: IconButton(
           icon: SvgPicture.asset('assets/images/img_ic_down.svg',
-              height: 24, width: 24),
+              color: Colors.white, height: 24, width: 24),
           onPressed: () => Get.back(),
         ),
       ),
