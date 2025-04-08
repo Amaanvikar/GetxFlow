@@ -20,12 +20,55 @@ class _DrawerWidgetState extends State<DrawerWidget> {
       child: Column(
         children: <Widget>[
           // Drawer Header
-          UserAccountsDrawerHeader(
-            accountName: Text('Aman Pathan'),
-            accountEmail: Text('amanp@gmail.com'),
-            currentAccountPicture: CircleAvatar(
-              backgroundColor: Colors.orange,
-              child: Text('A', style: TextStyle(color: Colors.white)),
+          // UserAccountsDrawerHeader(
+          //   accountName: Text('Aman Pathan'),
+          //   accountEmail: Text('amanp@gmail.com'),
+          //   currentAccountPicture: CircleAvatar(
+          //     backgroundColor: Colors.orange,
+          //     child: Text('A', style: TextStyle(color: Colors.white)),
+          //   ),
+          // ),
+
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 40, horizontal: 16),
+            color: Colors.white,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                CircleAvatar(
+                  radius: 30,
+                  backgroundImage: AssetImage('assets/images/app_logo.png'),
+                ),
+                SizedBox(width: 16),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Viru V Savale',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      'drivert@gmail.com',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+                Spacer(),
+                IconButton(
+                  icon: Icon(Icons.close, color: Colors.grey),
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the drawer
+                  },
+                ),
+              ],
             ),
           ),
           // Drawer Items

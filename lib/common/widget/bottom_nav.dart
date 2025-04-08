@@ -30,7 +30,7 @@ class BottomNavigation extends StatelessWidget {
               Get.toNamed('/profile');
               break;
             default:
-              Get.toNamed('/home');
+              Get.offAll('/home');
               break;
           }
         },

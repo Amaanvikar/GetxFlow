@@ -8,6 +8,9 @@ class UserProfileController extends GetxController {
   var driverProfile = Rxn<DriverProfile>(); // Observable driver profile
   var isLoading = false.obs; // Observable loading state
 
+  var userName = ''.obs;
+  var userEmail = ''.obs;
+
   Future<void> fetchProfileData() async {
     isLoading.value = true; // Show loading indicator
 

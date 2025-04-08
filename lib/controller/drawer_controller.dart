@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 
 class DrawerLogicController extends GetxController {
   var selectedIndex = 0.obs;
+  var userName = ''.obs;
+  var userEmail = ''.obs;
 
   @override
   void onInit() {
