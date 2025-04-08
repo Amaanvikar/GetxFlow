@@ -25,6 +25,28 @@ class HomeScreen extends StatelessWidget {
                   TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
             ),
           ),
+          actions: [
+            Row(
+              children: [
+                Obx(() => Text(
+                      controller.isOnline.value ? "Online" : "Offline",
+                      style: const TextStyle(color: Colors.white),
+                    )),
+                Obx(() => Switch(
+                      value: controller.isOnline.value,
+                      onChanged: (value) {
+                        controller.isOnline.value = value;
+                      },
+                      activeColor: Colors.white60,
+                      inactiveThumbColor: Colors.grey,
+                      inactiveTrackColor: Colors.white24,
+                    )),
+              ],
+            ),
+            const SizedBox(
+              width: 8,
+            ),
+          ],
         ),
         body: Center(
           child: Obx(() => Column(
