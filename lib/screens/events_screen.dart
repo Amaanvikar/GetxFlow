@@ -17,8 +17,8 @@ class EventScreen extends StatefulWidget {
 
 class _EventScreenState extends State<EventScreen> {
   final EventScreenController _controller = Get.put(EventScreenController());
-  final BottomNavController bottomNavController =
-      Get.find<BottomNavController>();
+  // final BottomNavController bottomNavController =
+  //     Get.find<BottomNavController>();
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +40,7 @@ class _EventScreenState extends State<EventScreen> {
               width: 24,
             ),
             onPressed: () {
-              bottomNavController.selectedIndex.value = 0;
+              // bottomNavController.selectedIndex.value = 0;
               Get.offAll(() => HomeScreen());
             }),
       ),
@@ -53,7 +53,7 @@ class _EventScreenState extends State<EventScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: const BottomNavigation(),
+      // bottomNavigationBar: const BottomNavigation(),
     );
   }
 }

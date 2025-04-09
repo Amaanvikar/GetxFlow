@@ -21,8 +21,8 @@ class UserProfilePageState extends State<UserProfilePage> {
   final UserProfileController controller = Get.put(UserProfileController());
 
   // Fetch the existing BottomNavController instance
-  final BottomNavController bottomNavController =
-      Get.find<BottomNavController>();
+  // final BottomNavController bottomNavController =
+  //     Get.find<BottomNavController>();
 
   File? _profileImage;
 
@@ -66,7 +66,7 @@ class UserProfilePageState extends State<UserProfilePage> {
               width: 24,
             ),
             onPressed: () {
-              bottomNavController.selectedIndex.value = 0;
+              //   bottomNavController.selectedIndex.value = 0;
               Get.offAll(() => HomeScreen());
             }),
       ),
@@ -171,7 +171,7 @@ class UserProfilePageState extends State<UserProfilePage> {
           ),
         );
       }),
-      bottomNavigationBar: const BottomNavigation(),
+      // bottomNavigationBar: const BottomNavigation(),
     );
   }
 

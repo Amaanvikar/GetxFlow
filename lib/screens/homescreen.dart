@@ -12,7 +12,7 @@ class HomeScreen extends StatelessWidget {
     final HomeScreenController controller = Get.put(HomeScreenController());
     return Scaffold(
         drawer: DrawerWidget(),
-        bottomNavigationBar: const BottomNavigation(),
+        // bottomNavigationBar: const BottomNavigation(),
         appBar: AppBar(
           centerTitle: true,
           automaticallyImplyLeading: true,

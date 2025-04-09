@@ -16,8 +16,8 @@ class DriverRideListScreen extends StatefulWidget {
 
 class _DriverRideListScreenState extends State<DriverRideListScreen> {
   final DriverRideController controller = Get.put(DriverRideController());
-  final BottomNavController bottomNavController =
-      Get.find<BottomNavController>();
+  // final BottomNavController bottomNavController =
+  //     Get.find<BottomNavController>();
 
   final TextEditingController searchController = TextEditingController();
 
@@ -56,7 +56,7 @@ class _DriverRideListScreenState extends State<DriverRideListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: const BottomNavigation(),
+      // bottomNavigationBar: const BottomNavigation(),
       appBar: AppBar(
         backgroundColor: Color(0xFFB42318),
         centerTitle: true,
@@ -70,7 +70,7 @@ class _DriverRideListScreenState extends State<DriverRideListScreen> {
               width: 24,
             ),
             onPressed: () {
-              bottomNavController.selectedIndex.value = 0;
+              //   bottomNavController.selectedIndex.value = 0;
               Get.offAll(() => HomeScreen());
             }),
       ),
