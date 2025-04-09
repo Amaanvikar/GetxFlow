@@ -16,11 +16,6 @@ class _OtpScreenState extends State<OtpScreen> {
 
   Future<void> verifyOtp() async {
     isLoading.value = true;
-    print("Verifying OTP with: ");
-    print("Mobile: $mobileNumber");
-    print("OTP: ${otpController.text}");
-    print("is_new_user: 0");
-    print("Notification Token: asd1asDAsD");
 
     try {
       final response = await http.post(

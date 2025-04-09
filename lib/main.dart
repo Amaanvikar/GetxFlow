@@ -11,6 +11,7 @@ import 'package:getxflow/screens/homescreen.dart';
 import 'package:getxflow/screens/login.dart';
 import 'package:getxflow/screens/user_profile_screen.dart';
 import 'package:getxflow/screens/splash.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 void main() async {
   // await GetStorage.init();
