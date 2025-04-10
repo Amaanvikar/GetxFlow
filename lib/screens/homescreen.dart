@@ -58,6 +58,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:getxflow/common/widget/drawer_widget.dart';
 import 'package:getxflow/controller/driver_status_controller.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -67,56 +68,61 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: DrawerWidget(),
       appBar: AppBar(
-        title: Text("Driver Status"),
+        centerTitle: true,
+        backgroundColor: const Color(0xFFB42318),
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text(
+          "Driver Status",
+          style: TextStyle(color: Colors.white),
+        ),
+        actions: [
+          Obx(() {
+            if (driverStatusController.isLoading.value) {
+              return const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                child: Center(
+                  child: SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(
+                        color: Colors.white, strokeWidth: 2),
+                  ),
+                ),
+              );
+            }
+
+            final isOnline = driverStatusController.selectedStatus.value == '1';
+
+            return Row(
+              children: [
+                Text(
+                  isOnline ? "Online" : "Offline",
+                  style: const TextStyle(color: Colors.white),
+                ),
+                Switch(
+                  value: isOnline,
+                  onChanged: (value) {
+                    driverStatusController.updateStatus(value ? '1' : '0');
+                  },
+                  activeColor: Colors.white,
+                ),
+              ],
+            );
+          }),
+        ],
       ),
       body: Obx(() {
-        if (driverStatusController.isLoading.value) {
-          return Center(child: CircularProgressIndicator());
-        }
-
-        // Get the status from the response (this should be based on the fetched driver status)
-        var currentStatus = driverStatusController.selectedStatus.value == '1'
-            ? "Online"
-            : "Offline";
-
-        // Print the current status to the terminal
-        print("Current Status: $currentStatus");
-
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Status toggle switch (Online / Offline)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Current Status: $currentStatus"),
-                  Switch(
-                    value: driverStatusController.selectedStatus.value == '1',
-                    onChanged: (value) {
-                      driverStatusController.updateStatus(value ? '1' : '0');
-                    },
-                  ),
-                ],
-              ),
-
-              // Display the status message from the fetched data
-              Expanded(
-                child: ListView.builder(
-                  itemCount: driverStatusController.driverStatus.length,
-                  itemBuilder: (context, index) {
-                    final status = driverStatusController.driverStatus[index];
-                    return ListTile(
-                      title: Text(status.status),
-                      subtitle: Text(status.message),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
+        return ListView.builder(
+          itemCount: driverStatusController.driverStatus.length,
+          itemBuilder: (context, index) {
+            final status = driverStatusController.driverStatus[index];
+            return ListTile(
+              title: Text(status.status),
+              subtitle: Text(status.message),
+            );
+          },
         );
       }),
     );

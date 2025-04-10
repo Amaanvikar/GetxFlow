@@ -12,6 +12,7 @@ import 'package:getxflow/screens/login.dart';
 import 'package:getxflow/screens/user_profile_screen.dart';
 import 'package:getxflow/screens/splash.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 void main() async {
   // await GetStorage.init();
@@ -21,7 +22,13 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(const MyApp());
+}
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print("Handling background message: ${message.messageId}");
 }
 
 class MyApp extends StatelessWidget {
