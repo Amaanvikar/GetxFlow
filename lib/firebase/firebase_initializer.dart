@@ -7,7 +7,7 @@ import 'push_notifications.dart';
 Future<void> firebaseBackgroundMessage(RemoteMessage message) async {
   await Firebase.initializeApp();
   print(
-      "🔥 BG MESSAGE: ${message.notification?.title} - ${message.notification?.body}");
+      "BG MESSAGE: ${message.notification?.title} - ${message.notification?.body}");
 }
 
 class FirebaseInitializer {

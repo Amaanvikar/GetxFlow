@@ -10,6 +10,7 @@ class DriverRideController extends GetxController {
   var selectedStatus = '5'.obs;
   var isLoading = true.obs;
   var isBooking = true.obs;
+  var driverId = ''.obs;
 
   var showFilters = false.obs;
   var searchQuery = ''.obs;
@@ -36,7 +37,7 @@ class DriverRideController extends GetxController {
       isLoading(true);
       var url = Uri.parse("https://windhans.com/2022/hrcabs/getDriverRideList");
       var response = await http.post(url, body: {
-        'driver_id': '8',
+        'driver_id': driverId.value,
         'is_book': selectedStatus.value.toString(),
         'page': '1',
       });

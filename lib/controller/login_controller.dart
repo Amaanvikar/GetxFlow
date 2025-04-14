@@ -1,10 +1,13 @@
 import 'dart:convert';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/http/utils/body_decoder.dart';
+import 'package:getxflow/firebase/push_notifications.dart';
 import 'package:getxflow/models/user_profile_model.dart';
 import 'package:getxflow/screens/homescreen.dart';
 import 'package:getxflow/screens/login.dart';
+import 'package:getxflow/utils/pref_utils.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -19,25 +22,30 @@ class LoginController extends GetxController {
   void onInit() {
     super.onInit();
     checkUserSession();
+    PushNotifications.init();
   }
 
   Future<void> loginApi() async {
     isloading.value = true;
+
     try {
-      print(
-        {
-          'login_name': emailController.text,
-          'login_pass': passwordController.text,
-          'notification_token': 'asasasasa5sa5sa5sa5ss5',
-        },
-      );
+      // Always fetch the latest token here
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+      print('📲 Fetched FCM Token before login: $fcmToken');
+      // final fcmToken = await PrefUtils.getFcmToken();
+      // print('Fetched FCM Token before login: $fcmToken');
+
+      final body = {
+        'login_name': emailController.text,
+        'login_pass': passwordController.text,
+        'notification_token': fcmToken ?? '',
+      };
+
+      print(body);
+
       final response = await post(
         Uri.parse("https://windhans.com/2022/hrcabs/driverLogin"),
-        body: {
-          'login_name': emailController.text,
-          'login_pass': passwordController.text,
-          'notification_token': 'asasasasa5sa5sa5sa5ss5',
-        },
+        body: body,
       );
 
       print('Status Code: ${response.statusCode}');

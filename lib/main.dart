@@ -1,11 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:getxflow/controller/bottom_nav_controller.dart';
 import 'package:getxflow/controller/drawer_controller.dart';
 import 'package:getxflow/controller/login_controller.dart';
 import 'package:getxflow/firebase/firebase_initializer.dart';
 import 'package:getxflow/firebase/firebase_options.dart';
+import 'package:getxflow/firebase/push_notifications.dart';
 import 'package:getxflow/screens/driver_ride_list_screen.dart';
 import 'package:getxflow/screens/events_screen.dart';
 import 'package:getxflow/screens/homescreen.dart';
@@ -23,6 +23,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await PushNotifications.init();
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -36,7 +37,6 @@ Future<void> main() async {
 
   // Inject controllers using GetX
   Get.put(LoginController()); // Login controller
-  // Get.lazyPut(() => BottomNavController()); // Bottom navigation controller
   Get.put(DrawerLogicController);
   runApp(const MyApp());
 }

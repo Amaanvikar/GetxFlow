@@ -23,11 +23,10 @@ class DriverStatusController extends GetxController {
     try {
       isLoading(true);
 
-      await updateCurrentLocation(); // <-- Add this
+      await updateCurrentLocation();
 
       var url = Uri.parse("https://windhans.com/2022/hrcabs/getDriverStatus");
       print({
-        'vd_log_id': '2',
         'status': selectedStatus.value,
         'current_vd_lat': currentLatitude.value,
         'current_vd_lng': currentLongitude.value,
@@ -37,7 +36,7 @@ class DriverStatusController extends GetxController {
         'vd_log_id': '2',
         'status': selectedStatus.value,
         'current_vd_lat': currentLatitude.value,
-        'current_vd_lng': currentLongitude.value,
+        'current_vd_long': currentLongitude.value,
       });
 
       if (response.statusCode == 200) {

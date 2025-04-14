@@ -14,8 +14,6 @@ class DriverRideListScreen extends StatefulWidget {
 
 class _DriverRideListScreenState extends State<DriverRideListScreen> {
   final DriverRideController controller = Get.put(DriverRideController());
-  // final BottomNavController bottomNavController =
-  //     Get.find<BottomNavController>();
 
   final TextEditingController searchController = TextEditingController();
 
