@@ -1,7 +1,7 @@
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/http/utils/body_decoder.dart';
 import 'package:getxflow/models/user_profile_model.dart';
 import 'package:getxflow/screens/homescreen.dart';
 import 'package:getxflow/screens/login.dart';
@@ -24,37 +24,39 @@ class LoginController extends GetxController {
   Future<void> loginApi() async {
     isloading.value = true;
     try {
+      print(
+        {
+          'login_name': emailController.text,
+          'login_pass': passwordController.text,
+          'notification_token': 'asasasasa5sa5sa5sa5ss5',
+        },
+      );
       final response = await post(
         Uri.parse("https://windhans.com/2022/hrcabs/driverLogin"),
         body: {
           'login_name': emailController.text,
           'login_pass': passwordController.text,
-          'notification_token': '',
+          'notification_token': 'asasasasa5sa5sa5sa5ss5',
         },
       );
 
-      var data = jsonDecode(response.body);
-      isloading.value = false;
+      print('Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
 
-      print('Response Status Code: ${response.statusCode}');
-      print('Response Data: $data');
+      final data = jsonDecode(response.body);
 
-      if (response.statusCode == 200 && data['result'] == true) {
-        print('Login Successful, navigating to Home Page.');
+      if (data['result'] == true) {
         Get.snackbar('Login Successful', data['reason']);
-
-        // Save session details
         await saveUserSession(data);
-
         Get.toNamed('/home');
       } else {
-        print('Login Failed: ${data['reason']}');
-        Get.snackbar('Login Failed', data['reason'] ?? 'Unknown Error');
+        Get.snackbar('Login Failed', data['reason'] ?? 'Unknown error');
       }
     } catch (e) {
-      isloading.value = false;
       print('Exception: $e');
-      Get.snackbar('Exception', e.toString());
+      Get.snackbar('Network Error', e.toString());
+    } finally {
+      isloading.value = false;
     }
   }
 

@@ -4,7 +4,7 @@ import 'package:getxflow/controller/drawer_controller.dart';
 import 'package:getxflow/controller/login_controller.dart';
 
 class DrawerWidget extends StatefulWidget {
-  DrawerWidget({super.key});
+  const DrawerWidget({super.key});
 
   @override
   State<DrawerWidget> createState() => _DrawerWidgetState();

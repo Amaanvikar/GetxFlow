@@ -9,17 +9,21 @@ plugins {
 }
 
 android {
-    namespace = "com.example.getxflow"
-    compileSdk = flutter.compileSdkVersion
+    namespace = "com.wind.hrcabdriver"
+    compileSdk = 35
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+        coreLibraryDesugaringEnabled true 
+
+    //     sourceCompatibility = JavaVersion.VERSION_1_8
+    //     targetCompatibility = JavaVersion.VERSION_1_8
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
+        jvmTarget = "11"
     }
 
     defaultConfig {
@@ -44,4 +48,11 @@ android {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    implementation("com.google.android.gms:play-services-auth:21.3.0") 
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4") 
+
+    
 }

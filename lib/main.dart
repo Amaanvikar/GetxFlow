@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getxflow/controller/bottom_nav_controller.dart';
 import 'package:getxflow/controller/login_controller.dart';
-import 'package:getxflow/firebase_options.dart';
+import 'package:getxflow/firebase/firebase_initializer.dart';
+import 'package:getxflow/firebase/firebase_options.dart';
 import 'package:getxflow/screens/driver_ride_list_screen.dart';
 import 'package:getxflow/screens/events_screen.dart';
 import 'package:getxflow/screens/homescreen.dart';
@@ -11,24 +12,32 @@ import 'package:getxflow/screens/homescreen.dart';
 import 'package:getxflow/screens/login.dart';
 import 'package:getxflow/screens/user_profile_screen.dart';
 import 'package:getxflow/screens/splash.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
-void main() async {
-  // await GetStorage.init();
-  Get.put(LoginController()); // Ensure controller is initialized
-  Get.lazyPut(() => BottomNavController());
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  runApp(const MyApp());
-}
-
+// Handle background FCM messages
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   print("Handling background message: ${message.messageId}");
+}
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  // Register background message handler
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  // Initialize other services like notification setup
+  await FirebaseInitializer.initialize();
+
+  // Inject controllers using GetX
+  Get.put(LoginController()); // Login controller
+  Get.lazyPut(() => BottomNavController()); // Bottom navigation controller
+
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {

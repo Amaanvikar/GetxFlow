@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class OtpScreen extends StatefulWidget {
+  const OtpScreen({super.key});
+
   @override
   _OtpScreenState createState() => _OtpScreenState();
 }

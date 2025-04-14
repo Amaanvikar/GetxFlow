@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:getxflow/common/widget/bottom_nav.dart';
-import 'package:getxflow/controller/bottom_nav_controller.dart';
 import 'package:getxflow/controller/driver_ride_controller.dart';
 import 'package:getxflow/screens/homescreen.dart';
 import 'package:getxflow/screens/ride_list_details_screen.dart';

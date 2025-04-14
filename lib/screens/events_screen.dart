@@ -3,8 +3,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/instance_manager.dart';
 import 'package:get/route_manager.dart';
-import 'package:getxflow/common/widget/bottom_nav.dart';
-import 'package:getxflow/controller/bottom_nav_controller.dart';
 import 'package:getxflow/controller/event_screen_controller.dart';
 import 'package:getxflow/screens/homescreen.dart';
 
@@ -53,7 +51,6 @@ class _EventScreenState extends State<EventScreen> {
           ),
         ),
       ),
-      // bottomNavigationBar: const BottomNavigation(),
     );
   }
 }

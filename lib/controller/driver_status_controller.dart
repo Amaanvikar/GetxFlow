@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
 class DriverStatusController extends GetxController {
-  var driverStatus = <DriverStatus>[].obs;
+  Rx<DriverStatus> driverStatus = DriverStatus(status: '', message: '').obs;
   var selectedStatus = '1'.obs;
   var isLoading = true.obs;
   var showFilters = false.obs;
@@ -22,8 +22,14 @@ class DriverStatusController extends GetxController {
     try {
       isLoading(true);
       var url = Uri.parse("https://windhans.com/2022/hrcabs/getDriverStatus");
+      print({
+        'vd_log_id': '2',
+        'status': selectedStatus.value.toString(),
+        'current_vd_lat': currentLatitude.value.toString(),
+        'current_vd_lng': currentLongitude.value.toString(),
+      });
       var response = await http.post(url, body: {
-        'd_log_id': '2',
+        'vd_log_id': '2',
         'status': selectedStatus.value.toString(),
         'current_vd_lat': currentLatitude.value.toString(),
         'current_vd_lng': currentLongitude.value.toString(),
@@ -31,10 +37,11 @@ class DriverStatusController extends GetxController {
 
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
-        if (data['result'] == true && data['status'] != null) {
-          var statuses = List<DriverStatus>.from(
-              data['status'].map((x) => DriverStatus.fromMap(x)));
-          driverStatus.assignAll(statuses);
+        print('success');
+        print(data);
+        if (data['result'] == true && data['current_status'] != null) {
+          var statuses = DriverStatus.fromMap(data);
+          driverStatus.value = statuses;
         } else {
           print("No status data found");
         }
@@ -72,7 +79,7 @@ class DriverStatus {
   // Factory method to create DriverStatus object from map
   factory DriverStatus.fromMap(Map<String, dynamic> map) {
     return DriverStatus(
-      status: map['status'],
+      status: map['current_status'],
       message: map['message'],
     );
   }

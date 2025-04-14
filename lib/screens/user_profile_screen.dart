@@ -2,8 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:getxflow/common/widget/bottom_nav.dart';
-import 'package:getxflow/controller/bottom_nav_controller.dart';
 import 'package:getxflow/controller/user_profile_controller.dart';
 import 'package:getxflow/screens/homescreen.dart';
 import 'package:getxflow/screens/login.dart';
