@@ -11,8 +11,8 @@ class DrawerWidget extends StatefulWidget {
 }
 
 class _DrawerWidgetState extends State<DrawerWidget> {
-  final DrawerLogicController controller = Get.put(DrawerLogicController());
   final LoginController loginController = Get.put(LoginController());
+  final DrawerLogicController controller = Get.put(DrawerLogicController());
 
   @override
   Widget build(BuildContext context) {

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:geolocator/geolocator.dart';
 
 class DriverStatusController extends GetxController {
   Rx<DriverStatus> driverStatus = DriverStatus(status: '', message: '').obs;
@@ -10,6 +11,7 @@ class DriverStatusController extends GetxController {
 
   var currentLatitude = ''.obs;
   var currentLongitude = ''.obs;
+  var driverId = ''.obs;
 
   @override
   void onInit() {
@@ -17,22 +19,25 @@ class DriverStatusController extends GetxController {
     super.onInit();
   }
 
-  void fetchDriverStatus() async {
-    String status = selectedStatus.value.toString();
+  Future<void> fetchDriverStatus() async {
     try {
       isLoading(true);
+
+      await updateCurrentLocation(); // <-- Add this
+
       var url = Uri.parse("https://windhans.com/2022/hrcabs/getDriverStatus");
       print({
         'vd_log_id': '2',
-        'status': selectedStatus.value.toString(),
-        'current_vd_lat': currentLatitude.value.toString(),
-        'current_vd_lng': currentLongitude.value.toString(),
+        'status': selectedStatus.value,
+        'current_vd_lat': currentLatitude.value,
+        'current_vd_lng': currentLongitude.value,
       });
+
       var response = await http.post(url, body: {
         'vd_log_id': '2',
-        'status': selectedStatus.value.toString(),
-        'current_vd_lat': currentLatitude.value.toString(),
-        'current_vd_lng': currentLongitude.value.toString(),
+        'status': selectedStatus.value,
+        'current_vd_lat': currentLatitude.value,
+        'current_vd_lng': currentLongitude.value,
       });
 
       if (response.statusCode == 200) {
@@ -55,21 +60,61 @@ class DriverStatusController extends GetxController {
     }
   }
 
+  Future<void> updateCurrentLocation() async {
+    try {
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        print('Location services are disabled.');
+        return;
+      }
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          print('Location permissions are denied.');
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        print('Location permissions are permanently denied.');
+        return;
+      }
+
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      currentLatitude.value = position.latitude.toString();
+      currentLongitude.value = position.longitude.toString();
+
+      print('Location updated: ${position.latitude}, ${position.longitude}');
+    } catch (e) {
+      print('Failed to get location: $e');
+    }
+  }
+
   // Function to toggle filters for status
   void toggleFilters() {
     showFilters.value = !showFilters.value;
   }
 
-  // Function to update the selected status
-  void updateStatus(String status) {
+  Future<void> updateStatus(String status) async {
     selectedStatus.value = status;
-    fetchDriverStatus(); // Re-fetch status when selection changes
+
+    // If going online, update location first
+    if (status == '0') {
+      await updateCurrentLocation();
+    }
+
+    await fetchDriverStatus();
   }
 }
 
 class DriverStatus {
   final String status;
-  final String message;
+  final String? message;
 
   DriverStatus({
     required this.status,
@@ -80,7 +125,7 @@ class DriverStatus {
   factory DriverStatus.fromMap(Map<String, dynamic> map) {
     return DriverStatus(
       status: map['current_status'],
-      message: map['message'],
+      message: map['message'] ?? map['reason'] ?? '',
     );
   }
 }

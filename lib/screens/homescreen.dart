@@ -31,29 +31,50 @@ class HomeScreen extends StatelessWidget {
                     width: 18,
                     height: 18,
                     child: CircularProgressIndicator(
-                        color: Colors.white, strokeWidth: 2),
+                      color: Colors.white,
+                      strokeWidth: 2,
+                    ),
                   ),
                 ),
               );
             }
 
-            final isOnline = driverStatusController.selectedStatus.value == '1';
+            final isOffline =
+                driverStatusController.selectedStatus.value == '1';
 
-            return Row(
-              children: [
-                Text(
-                  isOnline ? "Offline" : "Online",
-                  style: const TextStyle(color: Colors.white),
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: GestureDetector(
+                onTap: () {
+                  // Toggle status: 0 = online, 1 = offline
+                  driverStatusController.updateStatus(isOffline ? '0' : '1');
+                },
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: isOffline ? Colors.blueGrey : Colors.green,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        isOffline ? Icons.wifi_off : Icons.wifi,
+                        color: Colors.white,
+                        size: 18,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        isOffline ? 'Go Online' : 'Go Offline',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                Switch(
-                  value: isOnline,
-                  onChanged: (value) {
-                    driverStatusController.updateStatus(value ? '1' : '0');
-                  },
-                  activeColor: Colors.white,
-                  inactiveThumbColor: Colors.green,
-                ),
-              ],
+              ),
             );
           }),
         ],

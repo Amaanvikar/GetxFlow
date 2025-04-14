@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getxflow/controller/bottom_nav_controller.dart';
+import 'package:getxflow/controller/drawer_controller.dart';
 import 'package:getxflow/controller/login_controller.dart';
 import 'package:getxflow/firebase/firebase_initializer.dart';
 import 'package:getxflow/firebase/firebase_options.dart';
@@ -35,8 +36,8 @@ Future<void> main() async {
 
   // Inject controllers using GetX
   Get.put(LoginController()); // Login controller
-  Get.lazyPut(() => BottomNavController()); // Bottom navigation controller
-
+  // Get.lazyPut(() => BottomNavController()); // Bottom navigation controller
+  Get.put(DrawerLogicController);
   runApp(const MyApp());
 }
 
