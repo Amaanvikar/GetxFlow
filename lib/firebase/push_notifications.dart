@@ -95,6 +95,12 @@ class PushNotifications {
       // Foreground messages
       FirebaseMessaging.onMessage.listen((message) {
         print('Foreground message received');
+
+        if (message.data['source'] == 'admin') {
+          print(' Notification from Admin Panel received successfully');
+        } else {
+          print(' Notification from other source');
+        }
         _handleIncomingMessage(message);
       });
 

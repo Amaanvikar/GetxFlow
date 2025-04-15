@@ -1,11 +1,8 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getxflow/controller/drawer_controller.dart';
 import 'package:getxflow/controller/login_controller.dart';
 import 'package:getxflow/firebase/firebase_initializer.dart';
-import 'package:getxflow/firebase/firebase_options.dart';
-import 'package:getxflow/firebase/push_notifications.dart';
 import 'package:getxflow/screens/driver_ride_list_screen.dart';
 import 'package:getxflow/screens/events_screen.dart';
 import 'package:getxflow/screens/homescreen.dart';
@@ -35,7 +32,7 @@ Future<void> main() async {
 }
 
 // Handle background FCM messages
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // await Firebase.initializeApp();
   print("Handling background message: ${message.messageId}");
 }
