@@ -15,30 +15,29 @@ import 'package:getxflow/screens/user_profile_screen.dart';
 import 'package:getxflow/screens/splash.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
-// Handle background FCM messages
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-  print("Handling background message: ${message.messageId}");
-}
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await PushNotifications.init();
-
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-
-  // Register background message handler
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-  // Initialize other services like notification setup
   await FirebaseInitializer.initialize();
+
+  // await Firebase.initializeApp(
+  //   options: DefaultFirebaseOptions.android,
+  // );
+  // await PushNotifications.init();
+  // FirebaseMessaging.onBackgroundMessage(
+  //     _firebaseMessagingBackgroundHandler); // Register background message handler
+
+  // await FirebaseInitializer.initialize(); // Initialize other services like notification setup
 
   // Inject controllers using GetX
   Get.put(LoginController()); // Login controller
-  Get.put(DrawerLogicController);
+  Get.put(DrawerLogicController()); //drawer controller
   runApp(const MyApp());
+}
+
+// Handle background FCM messages
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // await Firebase.initializeApp();
+  print("Handling background message: ${message.messageId}");
 }
 
 class MyApp extends StatelessWidget {

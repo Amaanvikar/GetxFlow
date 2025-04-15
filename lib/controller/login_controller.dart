@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/http/utils/body_decoder.dart';
 import 'package:getxflow/firebase/push_notifications.dart';
 import 'package:getxflow/models/user_profile_model.dart';
 import 'package:getxflow/screens/homescreen.dart';
@@ -29,11 +28,17 @@ class LoginController extends GetxController {
     isloading.value = true;
 
     try {
-      // Always fetch the latest token here
-      final fcmToken = await FirebaseMessaging.instance.getToken();
-      print('📲 Fetched FCM Token before login: $fcmToken');
-      // final fcmToken = await PrefUtils.getFcmToken();
-      // print('Fetched FCM Token before login: $fcmToken');
+      // Always fetch the latest token right before making the API call
+      String? fcmToken = await PrefUtils.getFcmToken();
+      if (fcmToken == null || fcmToken.isEmpty) {
+        fcmToken = await FirebaseMessaging.instance.getToken();
+        // If no token, try saving it again
+        if (fcmToken != null) {
+          await PrefUtils.setFcmToken(fcmToken);
+          print('Token refreshed and saved: $fcmToken');
+        }
+      }
+      print('Fetched FCM Token before login: $fcmToken');
 
       final body = {
         'login_name': emailController.text,
@@ -41,7 +46,7 @@ class LoginController extends GetxController {
         'notification_token': fcmToken ?? '',
       };
 
-      print(body);
+      print('Login API Body: $body');
 
       final response = await post(
         Uri.parse("https://windhans.com/2022/hrcabs/driverLogin"),

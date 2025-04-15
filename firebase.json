@@ -1,1 +1,22 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"hrcabdriver","appId":"1:1087956059102:android:03e5e29d09e65ac645934f","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"hrcabdriver","configurations":{"android":"1:1087956059102:android:03e5e29d09e65ac645934f","ios":"1:1087956059102:ios:9a0f9b70e3114fb945934f"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "hrcabdriver",
+          "appId": "1:1087956059102:android:03e5e29d09e65ac645934f",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "hrcabdriver",
+          "configurations": {
+            "android": "1:1087956059102:android:03e5e29d09e65ac645934f",
+            "ios": "1:1087956059102:ios:9a0f9b70e3114fb945934f"
+          }
+        }
+      }
+    }
+  }
+}
