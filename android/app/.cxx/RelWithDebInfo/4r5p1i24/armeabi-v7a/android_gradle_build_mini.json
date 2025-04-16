@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "/Users/windhans/Documents/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/windhans/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/windhans/Desktop/HrCabDriver/GetxFlow/android/app/.cxx/RelWithDebInfo/4r5p1i24/armeabi-v7a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/windhans/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/windhans/Desktop/HrCabDriver/GetxFlow/android/app/.cxx/RelWithDebInfo/4r5p1i24/armeabi-v7a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}

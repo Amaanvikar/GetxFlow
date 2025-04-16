@@ -5,11 +5,18 @@ import 'package:getxflow/models/user_profile_model.dart';
 import 'package:http/http.dart' as http;
 
 class UserProfileController extends GetxController {
-  var driverProfile = Rxn<DriverProfile>(); // Observable driver profile
+  Rxn<DriverProfile> driverProfile =
+      Rxn<DriverProfile>(); // Observable driver profile
   var isLoading = false.obs; // Observable loading state
 
   var userName = ''.obs;
   var userEmail = ''.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchProfileData();
+  }
 
   Future<void> fetchProfileData() async {
     isLoading.value = true; // Show loading indicator

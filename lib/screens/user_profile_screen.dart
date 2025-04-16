@@ -52,65 +52,65 @@ class UserProfilePageState extends State<UserProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFFB42318),
+        backgroundColor: const Color(0xFFB42318),
         centerTitle: true,
-        title: Text('User Profile',
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+        title: const Text('Driver Profile',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         leading: IconButton(
-            icon: SvgPicture.asset(
-              'assets/images/img_ic_down.svg',
-              color: Colors.white,
-              height: 24,
-              width: 24,
-            ),
-            onPressed: () {
-              //   bottomNavController.selectedIndex.value = 0;
-              Get.offAll(() => HomeScreen());
-            }),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Get.offAll(() => HomeScreen()),
+        ),
       ),
       body: Obx(() {
-        if (controller.isLoading.value) {}
+        if (controller.isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
         final profile = controller.driverProfile.value;
         if (profile == null) {
-          return Center(
-            child: Text("Fetching profile..."),
-          );
+          return const Center(child: Text("Fetching profile..."));
         }
 
         return SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Profile Image Section
-              Center(
-                child: Stack(
-                  children: [
-                    CircleAvatar(
-                      radius: 70,
-                      backgroundImage: _profileImage != null
-                          ? FileImage(_profileImage!) as ImageProvider
-                          : (profile.prof_pic.isNotEmpty
-                              ? NetworkImage(
-                                  'https://windhans.com/2022/hrcabs/images/${profile.prof_pic}')
-                              : null),
-                      backgroundColor: Colors.grey[300],
-                      child: (profile.prof_pic.isEmpty && _profileImage == null)
-                          ? Icon(Icons.account_circle,
-                              size: 70, color: Colors.grey[700])
-                          : null,
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: IconButton(
-                        icon: Icon(Icons.camera_alt,
-                            color: Colors.blue, size: 30),
-                        onPressed: _pickImage,
+              // PROFILE IMAGE
+              Stack(
+                children: [
+                  CircleAvatar(
+                    radius: 60,
+                    backgroundImage: _profileImage != null
+                        ? FileImage(_profileImage!)
+                        : (profile.prof_pic.isNotEmpty
+                            ? NetworkImage(
+                                'https://windhans.com/2022/hrcabs/images/${profile.prof_pic}')
+                            : null) as ImageProvider?,
+                    backgroundColor: Colors.grey[300],
+                    child: (profile.prof_pic.isEmpty && _profileImage == null)
+                        ? const Icon(Icons.account_circle,
+                            size: 60, color: Colors.grey)
+                        : null,
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: GestureDetector(
+                      onTap: _pickImage,
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                          border: Border.all(color: Colors.grey),
+                        ),
+                        child: const Icon(Icons.camera_alt,
+                            color: Colors.black87, size: 22),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
 
               const SizedBox(height: 20),
@@ -140,30 +140,28 @@ class UserProfilePageState extends State<UserProfilePage> {
 
               const SizedBox(height: 20),
 
-              // Logout Button
-              ElevatedButton(
+              // LOGOUT BUTTON
+              ElevatedButton.icon(
                 onPressed: () async {
-                  bool shouldLogout =
+                  final shouldLogout =
                       await controller.showLogoutConfirmationDialog();
-
                   if (shouldLogout) {
-                    // Clear shared preferences and navigate to login
                     SharedPreferences prefs =
                         await SharedPreferences.getInstance();
                     await prefs.clear();
-
-                    Get.offAll(() =>
-                        LoginPage()); // Navigate to login screen and remove all previous routes
+                    Get.offAll(() => const LoginPage());
                   }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFB42318),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                      borderRadius: BorderRadius.circular(8)),
                 ),
-                child:
-                    const Text('Logout', style: TextStyle(color: Colors.white)),
+                icon: const Icon(Icons.logout, color: Colors.white),
+                label: const Text('Logout',
+                    style: TextStyle(color: Colors.white, fontSize: 16)),
               ),
             ],
           ),

@@ -45,6 +45,8 @@ class _EventScreenState extends State<EventScreen> {
       body: Center(
         child: Obx(
           () => Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(_controller.message.value),
             ],
