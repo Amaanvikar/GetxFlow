@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getxflow/common/widget/drawer_widget.dart';
 import 'package:getxflow/controller/driver_status_controller.dart';
+import 'package:getxflow/controller/location_controller.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class HomeScreen extends StatelessWidget {
   final DriverStatusController driverStatusController =
       Get.put(DriverStatusController());
+  final LocationController locationController = Get.put(LocationController());
 
   HomeScreen({super.key});
 
@@ -19,7 +22,7 @@ class HomeScreen extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
           "Driver Status",
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         actions: [
           Obx(() {
@@ -79,7 +82,25 @@ class HomeScreen extends StatelessWidget {
           }),
         ],
       ),
-      body: Center(),
+      body: Obx(() {
+        final position = locationController.currentLatLng.value;
+
+        if (position == null) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        return SafeArea(
+          child: GoogleMap(
+            onMapCreated: locationController.setMapController,
+            initialCameraPosition: CameraPosition(
+              target: position,
+              zoom: 16,
+            ),
+            myLocationEnabled: true,
+            myLocationButtonEnabled: true,
+          ),
+        );
+      }),
     );
   }
 }

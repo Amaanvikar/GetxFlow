@@ -103,6 +103,14 @@ class _DrawerWidgetState extends State<DrawerWidget> {
           ),
           ListTile(
             title: Text(
+              'location',
+              style: TextStyle(fontSize: 16),
+            ),
+            leading: Icon(Icons.pin_drop),
+            onTap: () => Get.toNamed('/location'),
+          ),
+          ListTile(
+            title: Text(
               'Event',
               style: TextStyle(fontSize: 16),
             ),
