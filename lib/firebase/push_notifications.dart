@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:getxflow/utils/pref_utils.dart';
 
 class PushNotifications {
@@ -81,6 +83,13 @@ class PushNotifications {
         importance: Importance.max,
       );
 
+      // const rideCallChannel = AndroidNotificationChannel(
+      //   'ride_call_channel',
+      //   'Ride Call Channel',
+      //   description: 'Channel for incoming calls',
+      //   importance: Importance.max,
+      // );
+
       await _flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
@@ -96,11 +105,11 @@ class PushNotifications {
       FirebaseMessaging.onMessage.listen((message) {
         print('Foreground message received');
 
-        if (message.data['source'] == 'admin') {
-          print(' Notification from Admin Panel received successfully');
-        } else {
-          print(' Notification from other source');
-        }
+        // if (message.data['source'] == 'admin') {
+        //   print(' Notification from Admin Panel received successfully');
+        // } else {
+        //   print(' Notification from other source');
+        // }
         _handleIncomingMessage(message);
       });
 
@@ -165,38 +174,39 @@ class PushNotifications {
   static void _handleDataNavigation(Map<String, dynamic> data) {
     final type = data['notification_type'];
 
-    // switch (type) {
-    //   case '1': // Schedule Ride Notification
-    //     Get.toNamed(
-    //       '/scheduleRide',
-    //       arguments: {
-    //         'driverId': data['driver_id'],
-    //         'driverName': "${data['driver_first_name']} ${data['driver_last_name']}",
-    //         'driverMobile': data['driver_mobile'],
-    //         'driverProfilePic': data['driver_prof_pic'],
-    //         'vehicleId': data['vehicle_id'],
-    //         'vehicleModel': data['vehicle_model'],
-    //         'dropUp': data['drop_up'],
-    //         'pickLat': data['pick_lat'],
-    //         'pickLong': data['pick_long'],
-    //       },
-    //     );
-    //     break;
-    //
-    //   case '5': // Driver is reaching soon
-    //     Get.toNamed(
-    //       '/driverEnRoute',
-    //       arguments: {
-    //         'message': data['msg'],
-    //       },
-    //     );
-    //     break;
-    //
-    //   default:
-    //     print(" Unknown notification_type: $type");
-    //     // Optional fallback screen
-    //     Get.toNamed('/notifications');
-    // }
+    switch (type) {
+      case '1': // Schedule Ride Notification
+        Get.toNamed(
+          '/scheduleRide',
+          arguments: {
+            'driverId': data['driver_id'],
+            'driverName':
+                "${data['driver_first_name']} ${data['driver_last_name']}",
+            'driverMobile': data['driver_mobile'],
+            'driverProfilePic': data['driver_prof_pic'],
+            'vehicleId': data['vehicle_id'],
+            'vehicleModel': data['vehicle_model'],
+            'dropUp': data['drop_up'],
+            'pickLat': data['pick_lat'],
+            'pickLong': data['pick_long'],
+          },
+        );
+        break;
+
+      case '5': // Driver is reaching soon
+        Get.toNamed(
+          '/driverEndRoute',
+          arguments: {
+            'message': data['msg'],
+          },
+        );
+        break;
+
+      default:
+        print(" Unknown notification_type: $type");
+        // Optional fallback screen
+        Get.toNamed('/notifications');
+    }
   }
 
   static Future<void> showSimpleNotification({
@@ -205,18 +215,29 @@ class PushNotifications {
     required String payload,
   }) async {
     try {
-      const androidDetails = AndroidNotificationDetails(
-        'default_channel', // Must match channel ID
-        'Default Notifications',
-        channelDescription: 'This channel is used for important notifications',
-        importance: Importance.max,
-        priority: Priority.high,
-        showWhen: true,
-        enableVibration: true,
-        playSound: true,
-      );
+      final androidDetails = AndroidNotificationDetails(
+          'default_channel', // Must match channel ID
+          'Default Notifications',
+          channelDescription:
+              'This channel is used for important notifications',
+          importance: Importance.max,
+          priority: Priority.high,
+          fullScreenIntent: true,
+          actions: [
+            AndroidNotificationAction('accept_action', 'Accept'),
+            AndroidNotificationAction('reject_action', 'Reject'),
+          ],
+          ticker: 'ticker',
+          showWhen: true,
+          enableVibration: true,
+          playSound: true,
+          styleInformation: BigTextStyleInformation(
+            body,
+            contentTitle: title,
+            summaryText: 'Tap to expand',
+          ));
 
-      const notificationDetails = NotificationDetails(
+      final notificationDetails = NotificationDetails(
         android: androidDetails,
         iOS: DarwinNotificationDetails(), // Add iOS specifics if needed
       );

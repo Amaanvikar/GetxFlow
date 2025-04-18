@@ -9,6 +9,7 @@ import 'package:getxflow/screens/homescreen.dart';
 import 'package:getxflow/screens/location_screen.dart';
 // import 'package:get_storage/get_storage.dart';
 import 'package:getxflow/screens/login.dart';
+import 'package:getxflow/screens/notification_screen.dart';
 import 'package:getxflow/screens/user_profile_screen.dart';
 import 'package:getxflow/screens/splash.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -53,9 +54,9 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/booking', page: () => DriverRideListScreen()),
         GetPage(name: '/event', page: () => EventScreen()),
         GetPage(name: '/profile', page: () => UserProfilePage()),
-        GetPage(name: '/location', page: () => LocationScreen())
-
-        // GetPage(name: '/search', page: () => SearchScreen()),
+        GetPage(name: '/location', page: () => LocationScreen()),
+        GetPage(name: '/notifications', page: () => NotificationScreen()),
+        // GetPage(name: '/driverEndRoute', page: () => DriverEndRoute())
       ],
     );
   }

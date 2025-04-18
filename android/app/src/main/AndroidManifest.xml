@@ -4,9 +4,13 @@ package="com.wind.hrcabdriver">
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />    
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" /> 
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
 
-
+   
     <application
         android:label="getxflow"
         android:name="${applicationName}"
@@ -33,6 +37,7 @@ package="com.wind.hrcabdriver">
               />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
+                <action android:name="FLUTTER_NOTIFICATION_CLICK" />
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
