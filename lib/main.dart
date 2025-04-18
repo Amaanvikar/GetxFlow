@@ -55,7 +55,11 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/event', page: () => EventScreen()),
         GetPage(name: '/profile', page: () => UserProfilePage()),
         GetPage(name: '/location', page: () => LocationScreen()),
-        GetPage(name: '/notifications', page: () => NotificationScreen()),
+        GetPage(
+            name: '/notifications',
+            page: () => NotificationScreen(
+                  payload: Get.arguments,
+                )),
         // GetPage(name: '/driverEndRoute', page: () => DriverEndRoute())
       ],
     );

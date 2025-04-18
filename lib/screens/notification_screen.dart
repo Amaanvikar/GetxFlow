@@ -1,10 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:get/instance_manager.dart';
-import 'package:get/utils.dart';
+import 'package:getxflow/controller/location_controller.dart';
 import 'package:getxflow/controller/notification_controller.dart';
 
 class NotificationScreen extends StatefulWidget {
-  const NotificationScreen({super.key});
+  final String payload;
+
+  NotificationScreen({super.key, required this.payload});
 
   @override
   State<NotificationScreen> createState() => _NotificationScreenState();
@@ -13,6 +18,26 @@ class NotificationScreen extends StatefulWidget {
 class _NotificationScreenState extends State<NotificationScreen> {
   final NotificationController notificationController =
       Get.put(NotificationController());
+  final LocationController locationController = Get.put(LocationController());
+
+  late String title;
+  late String body;
+
+  @override
+  void initState() {
+    super.initState();
+
+    try {
+      final Map<String, dynamic> data = jsonDecode(widget.payload);
+      title = data['title']?.toString() ?? 'No title';
+      body = data['body']?.toString() ?? 'No message';
+    } catch (e) {
+      title = 'Invalid';
+      body = 'Failed to parse notification data.';
+      print('Error decoding payload: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,32 +50,36 @@ class _NotificationScreenState extends State<NotificationScreen> {
         ),
         centerTitle: true,
       ),
-      body: RefreshIndicator(
-        onRefresh: notificationController.refreshNotifications,
-        child: notificationController.notifications.isEmpty
-            ? const Center(
-                child: Text("No notifications yet.",
-                    style: TextStyle(fontSize: 16)),
-              )
-            : ListView.builder(
-                padding: const EdgeInsets.all(10),
-                itemCount: notificationController.notifications.length,
-                itemBuilder: (context, index) {
-                  final item = notificationController.notifications[index];
-                  return Card(
-                    elevation: 2,
-                    margin: const EdgeInsets.symmetric(vertical: 6),
-                    child: ListTile(
-                      leading: const Icon(Icons.notifications_active),
-                      title: Text(item['title'] ?? 'No title'),
-                      subtitle: Text(item['body'] ?? 'No message'),
-                      trailing: Text(item['timestamp'] ?? '',
-                          style: const TextStyle(fontSize: 12)),
-                    ),
-                  );
-                },
+      body: Obx(() {
+        final position = locationController.currentLatLng.value;
+        if (position == null) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        return Column(
+          children: [
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Title: $title",
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    "Message: $body",
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                ],
               ),
-      ),
+            ),
+          ],
+        );
+      }),
     );
   }
 }

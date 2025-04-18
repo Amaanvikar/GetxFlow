@@ -68,6 +68,34 @@ class _LocationScreenState extends State<LocationScreen> {
                       label: const Text("Navigate to Location"),
                     ),
                     // Add more widgets here
+
+                    //          RefreshIndicator(
+                    //   onRefresh: notificationController.refreshNotifications,
+                    //   child: notificationController.notifications.isEmpty
+                    //       ? const Center(
+                    //           child: Text("No notifications yet.",
+                    //               style: TextStyle(fontSize: 16)),
+                    //         )
+                    //       : ListView.builder(
+                    //           padding: const EdgeInsets.all(10),
+                    //           itemCount: notificationController.notifications.length,
+                    //           itemBuilder: (context, index) {
+                    //             final item =
+                    //                 notificationController.notifications[index];
+                    //             return Card(
+                    //               elevation: 2,
+                    //               margin: const EdgeInsets.symmetric(vertical: 6),
+                    //               child: ListTile(
+                    //                 leading: const Icon(Icons.notifications_active),
+                    //                 title: Text(item['title'] ?? 'No title'),
+                    //                 subtitle: Text(item['body'] ?? 'No message'),
+                    //                 trailing: Text(item['timestamp'] ?? '',
+                    //                     style: const TextStyle(fontSize: 12)),
+                    //               ),
+                    //             );
+                    //           },
+                    //         ),
+                    // ),
                   ],
                 ),
               ),

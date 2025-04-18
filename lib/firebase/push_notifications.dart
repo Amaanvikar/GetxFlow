@@ -66,16 +66,40 @@ class PushNotifications {
       await _flutterLocalNotificationsPlugin.initialize(
         initSettings,
         onDidReceiveNotificationResponse: (response) {
-          if (response.actionId == 'accept_action') {
-            // Handle accept logic
-            print('User accepted the request.');
-          } else if (response.actionId == 'reject_action') {
-            // Handle reject logic
-            print('User rejected the request.');
-          } else {
-            final payload = jsonDecode(response.payload ?? '{}');
-            _handleDataNavigation(payload);
+          try {
+            final payload =
+                response.payload != null ? jsonDecode(response.payload!) : {};
+
+            // Handle specific action buttons
+            switch (response.actionId) {
+              case 'accept_action':
+                print('User accepted the request.');
+                // TODO: Add accept logic here
+                break;
+
+              case 'reject_action':
+                print('User rejected the request.');
+                // TODO: Add reject logic here
+                break;
+
+              default:
+                print('Notification tapped. Payload: $payload');
+                _handleDataNavigation(payload);
+            }
+          } catch (e) {
+            print('Error handling notification response: $e');
           }
+
+          // if (response.actionId == 'accept_action') {
+          //   // Handle accept logic
+          //   print('User accepted the request.');
+          // } else if (response.actionId == 'reject_action') {
+          //   // Handle reject logic
+          //   print('User rejected the request.');
+          // } else {
+          //   final payload = jsonDecode(response.payload ?? '{}');
+          //   _handleDataNavigation(payload);
+          // }
 
           // try {
           //   print('Notification tapped: ${response.payload}');
@@ -139,6 +163,8 @@ class PushNotifications {
   static void _handleIncomingMessage(RemoteMessage message) {
     try {
       if (message.notification != null || message.data.isNotEmpty) {
+        Get.toNamed('/home');
+        // Get.toNamed('/notifications',arguments: payload);
         showSimpleNotification(
           title: message.notification?.title ?? 'New Notification',
           body: message.notification?.body ?? 'You have a new message',
@@ -222,6 +248,7 @@ class PushNotifications {
           importance: Importance.max,
           priority: Priority.high,
           fullScreenIntent: true,
+          category: AndroidNotificationCategory.call,
           actions: [
             AndroidNotificationAction('accept_action', 'Accept'),
             AndroidNotificationAction('reject_action', 'Reject'),
@@ -233,7 +260,6 @@ class PushNotifications {
           styleInformation: BigTextStyleInformation(
             body,
             contentTitle: title,
-            summaryText: 'Tap to expand',
           ));
 
       final notificationDetails = NotificationDetails(
