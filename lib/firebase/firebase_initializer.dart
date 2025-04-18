@@ -19,11 +19,18 @@ Future<void> firebaseBackgroundMessage(RemoteMessage message) async {
   if (message.data.isNotEmpty) {
     print("BG DATA PAYLOAD: ${message.data}");
     // You might want to show a local notification here
+
     await PushNotifications.showSimpleNotification(
       title: message.notification?.title ?? 'New Notification',
       body: message.notification?.body ?? '',
       payload: jsonEncode(message.data),
     );
+
+    //   await PushNotifications.showIncomingCallNotification(
+    //     title: message.notification?.title ?? 'Incoming Call',
+    //     body: message.notification?.body ?? 'Tap to answer',
+    //     payload: jsonEncode(message.data),
+    //   );
   }
 }
 

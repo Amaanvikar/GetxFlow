@@ -66,29 +66,34 @@ class PushNotifications {
       await _flutterLocalNotificationsPlugin.initialize(
         initSettings,
         onDidReceiveNotificationResponse: (response) {
-          try {
-            print('Notification tapped: ${response.payload}');
+          if (response.actionId == 'accept_action') {
+            // Handle accept logic
+            print('User accepted the request.');
+          } else if (response.actionId == 'reject_action') {
+            // Handle reject logic
+            print('User rejected the request.');
+          } else {
             final payload = jsonDecode(response.payload ?? '{}');
             _handleDataNavigation(payload);
-          } catch (e) {
-            print('Notification tap handling error: $e');
           }
+
+          // try {
+          //   print('Notification tapped: ${response.payload}');
+          //   final payload = jsonDecode(response.payload ?? '{}');
+          //   _handleDataNavigation(payload);
+          // } catch (e) {
+          //   print('Notification tap handling error: $e');
+          // }
         },
       );
 
       // Create notification channel for Android
       const androidChannel = AndroidNotificationChannel(
-        'default_channel',
-        'Default',
-        importance: Importance.max,
-      );
-
-      // const rideCallChannel = AndroidNotificationChannel(
-      //   'ride_call_channel',
-      //   'Ride Call Channel',
-      //   description: 'Channel for incoming calls',
-      //   importance: Importance.max,
-      // );
+          'default_channel', 'input channels',
+          description: 'channel for income call notification',
+          importance: Importance.max,
+          playSound: true,
+          sound: RawResourceAndroidNotificationSound('ringtone'));
 
       await _flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
@@ -104,12 +109,6 @@ class PushNotifications {
       // Foreground messages
       FirebaseMessaging.onMessage.listen((message) {
         print('Foreground message received');
-
-        // if (message.data['source'] == 'admin') {
-        //   print(' Notification from Admin Panel received successfully');
-        // } else {
-        //   print(' Notification from other source');
-        // }
         _handleIncomingMessage(message);
       });
 
