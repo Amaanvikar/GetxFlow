@@ -1,40 +1,41 @@
-import 'dart:convert';
-
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:get/instance_manager.dart';
-import 'package:getxflow/controller/location_controller.dart';
-import 'package:getxflow/controller/notification_controller.dart';
+import 'package:get/get.dart';
 
 class NotificationScreen extends StatefulWidget {
-  final String payload;
-
-  NotificationScreen({super.key, required this.payload});
+  const NotificationScreen({super.key});
 
   @override
   State<NotificationScreen> createState() => _NotificationScreenState();
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
-  final NotificationController notificationController =
-      Get.put(NotificationController());
-  final LocationController locationController = Get.put(LocationController());
-
-  late String title;
-  late String body;
+  // Use a Map to store all arguments
+  late Map<String, dynamic> notificationData;
 
   @override
   void initState() {
     super.initState();
 
-    try {
-      final Map<String, dynamic> data = jsonDecode(widget.payload);
-      title = data['title']?.toString() ?? 'No title';
-      body = data['body']?.toString() ?? 'No message';
-    } catch (e) {
-      title = 'Invalid';
-      body = 'Failed to parse notification data.';
-      print('Error decoding payload: $e');
+    // Initialize with an empty map initially
+    notificationData = {};
+
+    // Check for direct arguments passed via Get.arguments
+    if (Get.arguments != null) {
+      notificationData.addAll(Get.arguments as Map<String, dynamic>);
+    }
+
+    // Also check for any pending notification data
+    _checkForPendingNotifications();
+  }
+
+  Future<void> _checkForPendingNotifications() async {
+    // Check if there's any initial message when app is opened from a terminated state
+    final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+    if (initialMessage != null && initialMessage.data.isNotEmpty) {
+      setState(() {
+        notificationData.addAll(initialMessage.data);
+      });
     }
   }
 
@@ -42,44 +43,32 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFFB42318),
-        iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text(
-          "Notifications",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
+        title: const Text("Notification Screen"),
       ),
-      body: Obx(() {
-        final position = locationController.currentLatLng.value;
-        if (position == null) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        return Column(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Title: $title",
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.w600),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    "Message: $body",
-                    style: const TextStyle(fontSize: 14),
-                  ),
-                ],
-              ),
-            ),
+            // Display the received notification data
+            Text('Driver Name: ${notificationData['driverName'] ?? 'Unknown'}'),
+            Text(
+                'Driver Mobile: ${notificationData['driverMobile'] ?? 'Unknown'}'),
+            Text(
+                'Pickup Location: ${notificationData['pickupLocation'] ?? 'Unknown'}'),
+            Text(
+                'Drop Location: ${notificationData['dropLocation'] ?? 'Unknown'}'),
+            Text('Pickup Lat: ${notificationData['pickupLat'] ?? 'Unknown'}'),
+            Text('Pickup Long: ${notificationData['pickupLong'] ?? 'Unknown'}'),
+            Text('Drop Lat: ${notificationData['dropLat'] ?? 'Unknown'}'),
+            Text('Drop Long: ${notificationData['dropLong'] ?? 'Unknown'}'),
+            Text('Duration: ${notificationData['duration'] ?? 'Unknown'}'),
+            Text(
+                'Vehicle Model: ${notificationData['vehicleModel'] ?? 'Unknown'}'),
+            // Add more fields as necessary
           ],
-        );
-      }),
+        ),
+      ),
     );
   }
 }

@@ -1,9 +1,8 @@
 import 'dart:convert';
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
+import 'package:getxflow/screens/notification_screen.dart';
 import 'package:getxflow/utils/pref_utils.dart';
 
 class PushNotifications {
@@ -67,66 +66,104 @@ class PushNotifications {
         initSettings,
         onDidReceiveNotificationResponse: (response) {
           try {
-            final payload =
-                response.payload != null ? jsonDecode(response.payload!) : {};
+            print('Notification tapped: ${response.payload}');
+            final payload = jsonDecode(response.payload ?? '{}');
 
-            // Handle specific action buttons
-            switch (response.actionId) {
-              case 'accept_action':
-                print('User accepted the request.');
-                // TODO: Add accept logic here
-                break;
-
-              case 'reject_action':
-                print('User rejected the request.');
-                // TODO: Add reject logic here
-                break;
-
-              default:
-                print('Notification tapped. Payload: $payload');
-                _handleDataNavigation(payload);
+            final actionId = response.actionId;
+            if (actionId == 'ACCEPT_RIDE') {
+              print("User accepted the ride");
+              _handleAcceptRide(payload);
+            } else if (actionId == 'CANCEL_RIDE') {
+              print("User cancelled the ride");
+              _handleCancelRide(payload);
+            } else {
+              _handleDataNavigation(payload);
             }
+
+            _handleDataNavigation(payload);
           } catch (e) {
-            print('Error handling notification response: $e');
+            print('Notification tap handling error: $e');
           }
-
-          // if (response.actionId == 'accept_action') {
-          //   // Handle accept logic
-          //   print('User accepted the request.');
-          // } else if (response.actionId == 'reject_action') {
-          //   // Handle reject logic
-          //   print('User rejected the request.');
-          // } else {
-          //   final payload = jsonDecode(response.payload ?? '{}');
-          //   _handleDataNavigation(payload);
-          // }
-
-          // try {
-          //   print('Notification tapped: ${response.payload}');
-          //   final payload = jsonDecode(response.payload ?? '{}');
-          //   _handleDataNavigation(payload);
-          // } catch (e) {
-          //   print('Notification tap handling error: $e');
-          // }
         },
       );
 
       // Create notification channel for Android
-      const androidChannel = AndroidNotificationChannel(
-          'default_channel', 'input channels',
-          description: 'channel for income call notification',
-          importance: Importance.max,
-          playSound: true,
-          sound: RawResourceAndroidNotificationSound('ringtone'));
 
-      await _flutterLocalNotificationsPlugin
+      // const androidChannel = AndroidNotificationChannel(
+      //   'default_channel',
+      //   'Default',
+      //   importance: Importance.max,
+      // );
+
+      // await _flutterLocalNotificationsPlugin
+      //     .resolvePlatformSpecificImplementation<
+      //         AndroidFlutterLocalNotificationsPlugin>()
+      //     ?.createNotificationChannel(androidChannel);
+
+      final androidPlugin = _flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
-          ?.createNotificationChannel(androidChannel);
+              AndroidFlutterLocalNotificationsPlugin>();
+
+      if (androidPlugin != null) {
+        // Create default_channel
+        const androidChannel = AndroidNotificationChannel(
+          'default_channel',
+          'Default',
+          importance: Importance.max,
+        );
+        await androidPlugin.createNotificationChannel(androidChannel);
+
+        const rideChannel = AndroidNotificationChannel(
+          'ride_channel',
+          'Ride Request Notifications',
+          description: 'Channel for ride requests with actions',
+          importance: Importance.max,
+        );
+        await androidPlugin.createNotificationChannel(rideChannel);
+      }
     } catch (e) {
       print('Local notification setup failed: $e');
     }
   }
+
+  static void _handleAcceptRide(Map<String, dynamic> data) {
+    final notificationType = data['notification_type'];
+
+    if (notificationType == 1) {
+      // Proceed only if it's a Ride Request type
+      print("Ride Request Accepted:");
+      print("Pickup: ${data['pickup_location']}");
+      print("Drop: ${data['drop_location']}");
+      print("Total: ₹${data['approximate_total_amount']}");
+      print("Trip Type: ${data['trip_type']}");
+
+      // Navigate to ride details screen
+      Get.toNamed('/notifications', arguments: {
+        'driverId': data['driver_id'],
+        'driverName':
+            "${data['driver_first_name']} ${data['driver_last_name']}",
+        'driverMobile': data['driver_mobile'],
+        'driverProfilePic': data['driver_prof_pic'],
+        'driverRating': data['driver_rating'],
+        'vehicleId': data['vehicle_id'],
+        'vehicleModel': data['vehicle_model'],
+        'vehicleNumber': data['vehicle_registrationno'],
+        'vehicleSegment': data['vehicle_segment'],
+        'logId': data['vd_log_id'],
+        'duration': data['duration'],
+        'pickupLocation': data['pickup_location'],
+        'pickupLat': data['pickup_lat'],
+        'pickupLong': data['pickup_long'],
+        'dropLocation': data['drop_location'],
+        'dropLat': data['drop_lat'],
+        'dropLong': data['drop_long'],
+      });
+    } else {
+      print("Accept button tapped, but notification type is not Ride Request.");
+    }
+  }
+
+  static void _handleCancelRide(Map<String, dynamic> data) {}
 
   static Future<void> setupListeners() async {
     try {
@@ -149,12 +186,6 @@ class PushNotifications {
         print('App launched from terminated state');
         _handleNotificationNavigation(initialMessage);
       }
-
-      // Background notifications (when the app is in the background but not terminated)
-      FirebaseMessaging.onBackgroundMessage((RemoteMessage message) async {
-        print('Background message received: ${message.notification?.title}');
-        _handleIncomingMessage(message);
-      });
     } catch (e) {
       print('Notification listeners setup failed: $e');
     }
@@ -163,13 +194,24 @@ class PushNotifications {
   static void _handleIncomingMessage(RemoteMessage message) {
     try {
       if (message.notification != null || message.data.isNotEmpty) {
-        Get.toNamed('/home');
-        // Get.toNamed('/notifications',arguments: payload);
-        showSimpleNotification(
-          title: message.notification?.title ?? 'New Notification',
-          body: message.notification?.body ?? 'You have a new message',
-          payload: jsonEncode(message.data),
-        );
+        final data = message.data;
+
+        if (data['notification_type'] == '1' ||
+            data['notification_type'] == 1) {
+          showRideRequestNotification(
+            title: message.notification?.title ?? 'Ride Request Scheduled',
+            body: message.notification?.body ??
+                'We have scheduled a driver for you',
+            payload: jsonEncode(data),
+          );
+        } else {
+          showSimpleNotification(
+            title: message.notification?.title ?? 'New Notification',
+            body: message.notification?.body ?? 'You have a new message',
+            payload: jsonEncode(data),
+          );
+        }
+        _handleDataNavigation(data);
       }
     } catch (e) {
       print('Message handling error: $e');
@@ -182,17 +224,6 @@ class PushNotifications {
     if (message.notification != null) {
       final data = message.data;
       _handleDataNavigation(data);
-      // if (type == 'booking') {
-      //   final bookingId = data['bookingId'];
-      //   Get.toNamed('/bookingDetails', arguments: bookingId);
-      // } else if (type == 'chat') {
-      //   final chatId = data['chatId'];
-      //   Get.toNamed('/chat', arguments: chatId);
-      // } else if (type == 'offer') {
-      //   Get.toNamed('/offers');
-      // } else {
-      //   Get.toNamed('/notifications');
-      // }
     }
   }
 
@@ -200,27 +231,9 @@ class PushNotifications {
     final type = data['notification_type'];
 
     switch (type) {
-      case '1': // Schedule Ride Notification
+      case 5: // Driver is reaching soon
         Get.toNamed(
-          '/scheduleRide',
-          arguments: {
-            'driverId': data['driver_id'],
-            'driverName':
-                "${data['driver_first_name']} ${data['driver_last_name']}",
-            'driverMobile': data['driver_mobile'],
-            'driverProfilePic': data['driver_prof_pic'],
-            'vehicleId': data['vehicle_id'],
-            'vehicleModel': data['vehicle_model'],
-            'dropUp': data['drop_up'],
-            'pickLat': data['pick_lat'],
-            'pickLong': data['pick_long'],
-          },
-        );
-        break;
-
-      case '5': // Driver is reaching soon
-        Get.toNamed(
-          '/driverEndRoute',
+          '/driverEnRoute',
           arguments: {
             'message': data['msg'],
           },
@@ -228,10 +241,50 @@ class PushNotifications {
         break;
 
       default:
-        print(" Unknown notification_type: $type");
-        // Optional fallback screen
-        Get.toNamed('/notifications');
+        print("Unknown notification type: $type");
     }
+  }
+
+  static Future<void> showRideRequestNotification({
+    required String title,
+    required String body,
+    required String payload,
+  }) async {
+    const AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
+      'ride_channel',
+      'Ride Request Notifications',
+      channelDescription: 'Ride request notifications with action buttons',
+      importance: Importance.max,
+      priority: Priority.high,
+      playSound: true,
+      enableVibration: true,
+      actions: <AndroidNotificationAction>[
+        AndroidNotificationAction(
+          'ACCEPT_RIDE',
+          'Accept Ride',
+        ),
+        AndroidNotificationAction(
+          'CANCEL_RIDE',
+          'Cancel Ride',
+        ),
+      ],
+    );
+
+    const NotificationDetails notificationDetails = NotificationDetails(
+      android: androidDetails,
+      iOS: DarwinNotificationDetails(), // iOS actions need extensions
+    );
+
+    final id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+
+    await _flutterLocalNotificationsPlugin.show(
+      id,
+      title,
+      body,
+      notificationDetails,
+      payload: payload,
+    );
   }
 
   static Future<void> showSimpleNotification({
@@ -240,29 +293,18 @@ class PushNotifications {
     required String payload,
   }) async {
     try {
-      final androidDetails = AndroidNotificationDetails(
-          'default_channel', // Must match channel ID
-          'Default Notifications',
-          channelDescription:
-              'This channel is used for important notifications',
-          importance: Importance.max,
-          priority: Priority.high,
-          fullScreenIntent: true,
-          category: AndroidNotificationCategory.call,
-          actions: [
-            AndroidNotificationAction('accept_action', 'Accept'),
-            AndroidNotificationAction('reject_action', 'Reject'),
-          ],
-          ticker: 'ticker',
-          showWhen: true,
-          enableVibration: true,
-          playSound: true,
-          styleInformation: BigTextStyleInformation(
-            body,
-            contentTitle: title,
-          ));
+      const androidDetails = AndroidNotificationDetails(
+        'default_channel',
+        'Default Notifications',
+        channelDescription: 'This channel is used for important notifications',
+        importance: Importance.max,
+        priority: Priority.high,
+        showWhen: true,
+        enableVibration: true,
+        playSound: true,
+      );
 
-      final notificationDetails = NotificationDetails(
+      const notificationDetails = NotificationDetails(
         android: androidDetails,
         iOS: DarwinNotificationDetails(), // Add iOS specifics if needed
       );
