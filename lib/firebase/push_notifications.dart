@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
+import 'package:getxflow/screens/notification_screen.dart';
 import 'package:getxflow/utils/pref_utils.dart';
 
 class PushNotifications {
@@ -67,47 +67,38 @@ class PushNotifications {
         initSettings,
         onDidReceiveNotificationResponse: (response) {
           try {
-            final payload =
-                response.payload != null ? jsonDecode(response.payload!) : {};
+            final payloadString = response.payload ?? '{}';
+            Map<String, dynamic> payload;
 
-            // Handle specific action buttons
+            try {
+              payload = jsonDecode(payloadString) as Map<String, dynamic>;
+            } catch (e) {
+              print('Payload is not JSON. Using as raw string.');
+              payload = {'raw': payloadString};
+            }
+
+            print('Notification tapped. Payload: $payload');
+
             switch (response.actionId) {
               case 'accept_action':
-                print('User accepted the request.');
-                // TODO: Add accept logic here
+                print(
+                    'Accept button pressed — navigating to NotificationScreen');
+                Future.delayed(Duration(milliseconds: 100), () {
+                  Get.to(() => NotificationScreen(data: jsonEncode(payload)));
+                });
                 break;
 
               case 'reject_action':
-                print('User rejected the request.');
-                // TODO: Add reject logic here
+                print('Reject button pressed.');
                 break;
 
               default:
-                print('Notification tapped. Payload: $payload');
+                print('Notification tapped default case.');
                 _handleDataNavigation(payload);
             }
           } catch (e) {
             print('Error handling notification response: $e');
           }
-
-          // if (response.actionId == 'accept_action') {
-          //   // Handle accept logic
-          //   print('User accepted the request.');
-          // } else if (response.actionId == 'reject_action') {
-          //   // Handle reject logic
-          //   print('User rejected the request.');
-          // } else {
-          //   final payload = jsonDecode(response.payload ?? '{}');
-          //   _handleDataNavigation(payload);
-          // }
-
-          // try {
-          //   print('Notification tapped: ${response.payload}');
-          //   final payload = jsonDecode(response.payload ?? '{}');
-          //   _handleDataNavigation(payload);
-          // } catch (e) {
-          //   print('Notification tap handling error: $e');
-          // }
         },
       );
 
@@ -138,6 +129,10 @@ class PushNotifications {
 
       // Background/opened app
       FirebaseMessaging.onMessageOpenedApp.listen((message) {
+        final notificationBody = message.notification?.body;
+        if (notificationBody != null) {
+          Get.to(() => NotificationScreen(data: notificationBody));
+        }
         print('App opened from notification');
         _handleNotificationNavigation(message);
       });
@@ -146,6 +141,7 @@ class PushNotifications {
       final initialMessage =
           await FirebaseMessaging.instance.getInitialMessage();
       if (initialMessage != null) {
+        Get.to(() => NotificationScreen());
         print('App launched from terminated state');
         _handleNotificationNavigation(initialMessage);
       }
@@ -162,13 +158,13 @@ class PushNotifications {
 
   static void _handleIncomingMessage(RemoteMessage message) {
     try {
+      print("Notification body: ${message.notification?.body}");
       if (message.notification != null || message.data.isNotEmpty) {
-        Get.toNamed('/home');
-        // Get.toNamed('/notifications',arguments: payload);
+        Get.to(() => NotificationScreen(data: message.notification?.body));
         showSimpleNotification(
           title: message.notification?.title ?? 'New Notification',
           body: message.notification?.body ?? 'You have a new message',
-          payload: jsonEncode(message.data),
+          payload: message.data,
         );
       }
     } catch (e) {
@@ -197,16 +193,20 @@ class PushNotifications {
   }
 
   static void _handleDataNavigation(Map<String, dynamic> data) {
-    final type = data['notification_type'];
+    if (data.isEmpty || data['notification_type'] == null) {
+      print('Invalid notification data: $data');
+      return;
+    }
+    final type = data['notification_type'].toString();
 
     switch (type) {
       case '1': // Schedule Ride Notification
         Get.toNamed(
-          '/scheduleRide',
+          '/notifications',
           arguments: {
             'driverId': data['driver_id'],
             'driverName':
-                "${data['driver_first_name']} ${data['driver_last_name']}",
+                "${data['driver_first_name'] ?? ''} ${data['driver_last_name'] ?? ''}",
             'driverMobile': data['driver_mobile'],
             'driverProfilePic': data['driver_prof_pic'],
             'vehicleId': data['vehicle_id'],
@@ -237,7 +237,8 @@ class PushNotifications {
   static Future<void> showSimpleNotification({
     required String title,
     required String body,
-    required String payload,
+    required Map<String, dynamic> payload,
+    // required String payload,
   }) async {
     try {
       final androidDetails = AndroidNotificationDetails(
@@ -275,7 +276,7 @@ class PushNotifications {
         title,
         body,
         notificationDetails,
-        payload: payload,
+        payload: jsonEncode(payload),
       );
     } catch (e) {
       print('Notification display failed: $e');

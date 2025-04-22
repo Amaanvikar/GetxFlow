@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:getxflow/firebase/firebase_options.dart';
-import 'push_notifications.dart';
+import 'package:getxflow/firebase/push_notifications.dart';
 
 @pragma('vm:entry-point')
 Future<void> firebaseBackgroundMessage(RemoteMessage message) async {
@@ -23,7 +23,7 @@ Future<void> firebaseBackgroundMessage(RemoteMessage message) async {
     await PushNotifications.showSimpleNotification(
       title: message.notification?.title ?? 'New Notification',
       body: message.notification?.body ?? '',
-      payload: jsonEncode(message.data),
+      payload: message.data,
     );
 
     //   await PushNotifications.showIncomingCallNotification(
