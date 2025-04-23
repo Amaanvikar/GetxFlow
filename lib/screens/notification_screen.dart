@@ -7,7 +7,6 @@ import 'package:get/utils.dart';
 import 'package:getxflow/controller/accept_ride_controller.dart';
 import 'package:getxflow/controller/location_controller.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
 import 'dart:convert'; // For parsing the JSON string
 
 class NotificationScreen extends StatefulWidget {
@@ -24,7 +23,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
   final AcceptRideController acceptRideController =
       Get.put(AcceptRideController());
 
-  late Map<String, dynamic> notificationData;
+  Set<Marker> markers = {};
+  GoogleMapController? mapController;
+
+  late String vdLogId;
+  late String rideReturnLogId;
+  late String rideRequestId;
+  late String duration;
+
+  Map<String, dynamic> notificationData = {}; // Initialize with an empty map
 
   @override
   void initState() {
@@ -32,11 +39,52 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
     // Parse the incoming notification data if available
     if (widget.data != null) {
-      notificationData = jsonDecode(widget.data!);
-      print('Parsed Notification Data: $notificationData');
-    } else {
-      notificationData = {};
+      try {
+        notificationData = jsonDecode(widget.data!);
+        vdLogId = notificationData['vd_log_id'] ?? '';
+        rideReturnLogId = notificationData['ride_return_log_id'] ?? '0';
+        rideRequestId = notificationData['ride_request_id'] ?? '';
+        duration = notificationData['duration'] ?? '';
+
+        debugPrint("Notification data parsed:");
+        debugPrint("vdLogId: $vdLogId");
+        debugPrint("rideReturnLogId: $rideReturnLogId");
+        debugPrint("rideRequestId: $rideRequestId");
+        debugPrint("duration: $duration");
+      } catch (e) {
+        debugPrint("Error parsing notification data: $e ");
+      }
     }
+
+    // double pickupLat =
+    //     double.tryParse(notificationData['pickup_lat'] ?? '') ?? 0.0;
+    // double pickupLng =
+    //     double.tryParse(notificationData['pickup_long'] ?? '') ?? 0.0;
+    // double dropLat = double.tryParse(notificationData['drop_lat'] ?? '') ?? 0.0;
+    // double dropLng =
+    //     double.tryParse(notificationData['drop_long'] ?? '') ?? 0.0;
+
+    // setState(() {
+    //   markers.add(Marker(
+    //     markerId: const MarkerId("pickup"),
+    //     position: LatLng(pickupLat, pickupLng),
+    //     infoWindow: const InfoWindow(title: "Pickup Location"),
+    //     icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+    //   ));
+
+    //   markers.add(Marker(
+    //     markerId: const MarkerId("dropoff"),
+    //     position: LatLng(dropLat, dropLng),
+    //     infoWindow: const InfoWindow(title: "Drop-off Location"),
+    //     icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+    //   ));
+    // });
+
+    // // Animate camera after small delay
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   locationController.animateCameraToBounds(
+    //       pickupLat, pickupLng, dropLat, dropLng);
+    // });
   }
 
   @override
@@ -62,13 +110,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
             // Map container
             Container(
               height: MediaQuery.of(context).size.height * 0.45,
-              margin: const EdgeInsets.all(12),
+              margin: const EdgeInsets.only(bottom: 12),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
                 border: Border.all(color: Colors.black),
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(15),
                 child: GoogleMap(
                   onMapCreated: locationController.setMapController,
                   initialCameraPosition: CameraPosition(
@@ -179,11 +225,26 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                     ),
                                   ),
                                   onPressed: () {
+                                    if (vdLogId.isEmpty ||
+                                        rideReturnLogId.isEmpty ||
+                                        rideRequestId.isEmpty ||
+                                        duration.isEmpty) {
+                                      Get.snackbar(
+                                        "Error",
+                                        "Ride information is incomplete",
+                                        snackPosition: SnackPosition.BOTTOM,
+                                        backgroundColor: Colors.red,
+                                        colorText: Colors.white,
+                                      );
+                                      return;
+                                    }
+
                                     acceptRideController.acceptRide(
-                                        vdLogId: '',
-                                        duration: '',
-                                        rideReturnLogId: '',
-                                        rideRequestId: '');
+                                      vdLogId: vdLogId,
+                                      rideReturnLogId: rideReturnLogId,
+                                      rideRequestId: rideRequestId,
+                                      duration: duration,
+                                    );
                                   },
                                   child: const Text("Confirm",
                                       style: TextStyle(
@@ -204,7 +265,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                     ),
                                   ),
                                   onPressed: () {
-                                    // Handle Decline
+                                    Get.back();
                                   },
                                   child: const Text(
                                     "Decline",

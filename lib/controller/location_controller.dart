@@ -45,4 +45,18 @@ class LocationController extends GetxController {
       print("Permission not granted");
     }
   }
+
+  void animateCameraToBounds(
+      double pickupLat, double pickupLng, double dropLat, double dropLng) {
+    if (mapController == null) return;
+
+    LatLngBounds bounds = LatLngBounds(
+      southwest: LatLng(pickupLat < dropLat ? pickupLat : dropLat,
+          pickupLng < dropLng ? pickupLng : dropLng),
+      northeast: LatLng(pickupLat > dropLat ? pickupLat : dropLat,
+          pickupLng > dropLng ? pickupLng : dropLng),
+    );
+
+    mapController!.animateCamera(CameraUpdate.newLatLngBounds(bounds, 50));
+  }
 }
