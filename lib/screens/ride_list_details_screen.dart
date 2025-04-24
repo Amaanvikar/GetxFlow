@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:getxflow/models/ride_request_model.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'dart:async';
 
 class RideListDetailsScreen extends StatefulWidget {
   final RideRequest ride;
@@ -14,11 +18,59 @@ class RideListDetailsScreen extends StatefulWidget {
 
 class _RideListDetailsScreenState extends State<RideListDetailsScreen> {
   Map<String, dynamic> _rideDataMap = {};
+  bool isEditMode = false;
+  GoogleMapController? mapController;
+  Set<Polyline> polylines = {};
+  List<LatLng> polylineCoordinates = [];
+
+  LatLng? driverLatLng;
+  LatLng? pickupLatLng;
 
   @override
   void initState() {
     super.initState();
     _rideDataMap = _rideRequestToMap(widget.ride);
+
+    driverLatLng = LatLng(
+      double.tryParse(widget.ride.rideStartLat ?? '') ?? 0.0,
+      double.tryParse(widget.ride.rideStartLong ?? '') ?? 0.0,
+    );
+    pickupLatLng = LatLng(
+      double.tryParse(widget.ride.pickupLat ?? '') ?? 0.0,
+      double.tryParse(widget.ride.pickupLong ?? '') ?? 0.0,
+    );
+
+    getPolyline();
+  }
+
+  Future<void> getPolyline() async {
+    PolylinePoints polylinePoints = PolylinePoints();
+    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+      request: PolylineRequest(
+        origin: PointLatLng(driverLatLng!.latitude, driverLatLng!.longitude),
+        destination:
+            PointLatLng(pickupLatLng!.latitude, pickupLatLng!.longitude),
+        mode: TravelMode.driving,
+      ),
+    );
+
+    if (result.points.isNotEmpty) {
+      polylineCoordinates.clear();
+      for (var point in result.points) {
+        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+      }
+
+      setState(() {
+        polylines.add(
+          Polyline(
+            polylineId: PolylineId('route'),
+            points: polylineCoordinates,
+            width: 5,
+            color: Colors.blue,
+          ),
+        );
+      });
+    }
   }
 
   // Convert the RideRequest object into a map for dynamic display
@@ -123,11 +175,45 @@ class _RideListDetailsScreenState extends State<RideListDetailsScreen> {
               color: Colors.white, height: 24, width: 24),
           onPressed: () => Get.back(),
         ),
+        actions: [
+          IconButton(
+            icon:
+                Icon(isEditMode ? Icons.save : Icons.edit, color: Colors.white),
+            onPressed: () {
+              setState(() {
+                isEditMode = !isEditMode;
+              });
+            },
+          )
+        ],
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           _buildProfileHeader(),
+          SizedBox(
+            height: 300,
+            child: GoogleMap(
+              onMapCreated: (controller) => mapController = controller,
+              initialCameraPosition: CameraPosition(
+                target: driverLatLng ?? LatLng(0, 0),
+                zoom: 12,
+              ),
+              polylines: polylines,
+              markers: {
+                Marker(
+                  markerId: MarkerId('driver'),
+                  position: driverLatLng!,
+                  infoWindow: InfoWindow(title: "Driver Location"),
+                ),
+                Marker(
+                  markerId: MarkerId('pickup'),
+                  position: pickupLatLng!,
+                  infoWindow: InfoWindow(title: "Pickup Location"),
+                ),
+              },
+            ),
+          ),
           const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.all(16),
@@ -199,7 +285,16 @@ class _RideListDetailsScreenState extends State<RideListDetailsScreen> {
           const SizedBox(width: 8),
           Expanded(
             flex: 3,
-            child: Text(value, style: TextStyle(fontSize: 14)),
+            child: isEditMode
+                ? TextFormField(
+                    initialValue: value,
+                    onChanged: (newVal) {
+                      setState(() {
+                        _rideDataMap[title] = newVal;
+                      });
+                    },
+                  )
+                : Text(value, style: TextStyle(fontSize: 14)),
           ),
         ],
       ),
