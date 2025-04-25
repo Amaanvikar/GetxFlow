@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:getxflow/controller/location_controller.dart';
 import 'package:getxflow/models/ride_request_model.dart';
+import 'package:getxflow/screens/homescreen.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-import 'dart:async';
 
 class RideListDetailsScreen extends StatefulWidget {
   final RideRequest ride;
@@ -17,6 +17,8 @@ class RideListDetailsScreen extends StatefulWidget {
 }
 
 class _RideListDetailsScreenState extends State<RideListDetailsScreen> {
+  final LocationController locationController = Get.put(LocationController());
+
   Map<String, dynamic> _rideDataMap = {};
   bool isEditMode = false;
   GoogleMapController? mapController;
@@ -40,12 +42,19 @@ class _RideListDetailsScreenState extends State<RideListDetailsScreen> {
       double.tryParse(widget.ride.pickupLong ?? '') ?? 0.0,
     );
 
-    getPolyline();
+    // Ensure valid coordinates before calling getPolyline
+    if (driverLatLng != null && pickupLatLng != null) {
+      getPolyline();
+    }
+
+    // getPolyline();
   }
 
   Future<void> getPolyline() async {
+    print("Generating polyline...");
     PolylinePoints polylinePoints = PolylinePoints();
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+      googleApiKey: 'AIzaSyCObi-eSXPyzGBVR9yQMabvA_lIruPYm8A',
       request: PolylineRequest(
         origin: PointLatLng(driverLatLng!.latitude, driverLatLng!.longitude),
         destination:
@@ -58,6 +67,7 @@ class _RideListDetailsScreenState extends State<RideListDetailsScreen> {
       polylineCoordinates.clear();
       for (var point in result.points) {
         polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+        print("Added point: $point"); // Check the points
       }
 
       setState(() {
@@ -177,12 +187,9 @@ class _RideListDetailsScreenState extends State<RideListDetailsScreen> {
         ),
         actions: [
           IconButton(
-            icon:
-                Icon(isEditMode ? Icons.save : Icons.edit, color: Colors.white),
+            icon: Icon(Icons.directions, color: Colors.white),
             onPressed: () {
-              setState(() {
-                isEditMode = !isEditMode;
-              });
+              Get.to(HomeScreen());
             },
           )
         ],
@@ -194,9 +201,12 @@ class _RideListDetailsScreenState extends State<RideListDetailsScreen> {
           SizedBox(
             height: 300,
             child: GoogleMap(
-              onMapCreated: (controller) => mapController = controller,
+              onMapCreated: (controller) {
+                mapController = controller;
+                getPolyline();
+              },
               initialCameraPosition: CameraPosition(
-                target: driverLatLng ?? LatLng(0, 0),
+                target: pickupLatLng ?? LatLng(0, 0),
                 zoom: 12,
               ),
               polylines: polylines,

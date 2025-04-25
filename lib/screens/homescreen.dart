@@ -12,6 +12,8 @@ class HomeScreen extends StatelessWidget {
 
   HomeScreen({super.key});
 
+  Set<Polyline> polylines = {};
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -96,6 +98,7 @@ class HomeScreen extends StatelessWidget {
               target: position,
               zoom: 16,
             ),
+            polylines: polylines,
             myLocationEnabled: true,
             myLocationButtonEnabled: true,
           ),

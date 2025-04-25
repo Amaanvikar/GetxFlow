@@ -1,11 +1,17 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 
 class LocationController extends GetxController {
   final Location _location = Location();
   final Rx<LatLng?> currentLatLng = Rx<LatLng?>(null);
   GoogleMapController? mapController;
+  Set<Polyline> polylines = {};
+
+  LatLng? driverLatLng;
+  LatLng? pickupLatLng;
 
   @override
   void onInit() {
@@ -58,5 +64,34 @@ class LocationController extends GetxController {
     );
 
     mapController!.animateCamera(CameraUpdate.newLatLngBounds(bounds, 50));
+  }
+
+  void getRoutePolyline(LatLng pickupLatLng) async {
+    final LatLng? driverLatLng = currentLatLng.value;
+    if (driverLatLng == null) return;
+
+    PolylinePoints polylinePoints = PolylinePoints();
+    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+        request: PolylineRequest(
+      origin: PointLatLng(driverLatLng.latitude, driverLatLng.longitude),
+      destination: PointLatLng(pickupLatLng.latitude, pickupLatLng.longitude),
+      mode: TravelMode.driving,
+    ));
+
+    if (result.points.isNotEmpty) {
+      List<LatLng> polylineCoordinates = result.points
+          .map((point) => LatLng(point.latitude, point.longitude))
+          .toList();
+
+      polylines.clear();
+      polylines.add(
+        Polyline(
+          polylineId: const PolylineId("pickup_to_driver"),
+          color: Colors.red,
+          width: 4,
+          points: polylineCoordinates,
+        ),
+      );
+    }
   }
 }

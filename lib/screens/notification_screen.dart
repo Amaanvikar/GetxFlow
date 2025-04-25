@@ -1,9 +1,5 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_instance/src/extension_instance.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:get/utils.dart';
 import 'package:getxflow/controller/accept_ride_controller.dart';
 import 'package:getxflow/controller/location_controller.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getxflow/controller/drawer_controller.dart';
+import 'package:getxflow/controller/home_screen_controller.dart';
 import 'package:getxflow/controller/login_controller.dart';
 import 'package:getxflow/firebase/firebase_initializer.dart';
+import 'package:getxflow/models/ride_request_model.dart';
 import 'package:getxflow/screens/driver_ride_list_screen.dart';
 import 'package:getxflow/screens/events_screen.dart';
 import 'package:getxflow/screens/homescreen.dart';
@@ -30,6 +32,7 @@ Future<void> main() async {
   // Inject controllers using GetX
   Get.put(LoginController()); // Login controller
   Get.put(DrawerLogicController()); //drawer controller
+
   runApp(const MyApp());
 }
 
