@@ -44,14 +44,15 @@ class _RideListDetailsScreenState extends State<RideListDetailsScreen> {
 
     // Ensure valid coordinates before calling getPolyline
     if (driverLatLng != null && pickupLatLng != null) {
-      getPolyline();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        getPolyline();
+      });
     }
 
     // getPolyline();
   }
 
   Future<void> getPolyline() async {
-    print("Generating polyline...");
     PolylinePoints polylinePoints = PolylinePoints();
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
       googleApiKey: 'AIzaSyCObi-eSXPyzGBVR9yQMabvA_lIruPYm8A',
@@ -203,7 +204,11 @@ class _RideListDetailsScreenState extends State<RideListDetailsScreen> {
             child: GoogleMap(
               onMapCreated: (controller) {
                 mapController = controller;
-                getPolyline();
+                if (driverLatLng != null && pickupLatLng != null) {
+                  getPolyline();
+                } else {
+                  print("Driver or Pickup location is null");
+                }
               },
               initialCameraPosition: CameraPosition(
                 target: pickupLatLng ?? LatLng(0, 0),

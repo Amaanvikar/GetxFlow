@@ -169,6 +169,7 @@ class _DriverRideListScreenState extends State<DriverRideListScreen> {
                       ),
                       trailing: GestureDetector(
                         onTap: () {
+                          // Get.to(HomeScreen());
                           Get.to(
                             RideListDetailsScreen(ride: ride),
                             arguments: ride,

@@ -5,6 +5,7 @@ import 'package:getxflow/controller/drawer_controller.dart';
 import 'package:getxflow/controller/login_controller.dart';
 import 'package:getxflow/controller/user_profile_controller.dart';
 import 'package:getxflow/models/user_profile_model.dart';
+import 'package:getxflow/screens/map_screen.dart';
 
 class DrawerWidget extends StatefulWidget {
   const DrawerWidget({super.key});
@@ -124,6 +125,14 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             ),
             leading: Icon(Icons.settings),
             onTap: () => Get.toNamed('/settings'),
+          ),
+          ListTile(
+            title: Text(
+              'Map Screen',
+              style: TextStyle(fontSize: 16),
+            ),
+            leading: Icon(Icons.directions),
+            onTap: () => Get.to(MapScreen()),
           ),
           ListTile(
             title: Text(
