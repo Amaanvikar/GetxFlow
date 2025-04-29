@@ -1,138 +1,137 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-import 'package:getxflow/common/widget/drawer_widget.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:getxflow/screens/homescreen.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 
-class MapScreen extends StatefulWidget {
-  const MapScreen({super.key});
-
+class RouteMapScreen extends StatefulWidget {
   @override
-  State<MapScreen> createState() => _MapScreenState();
+  _RouteMapScreenState createState() => _RouteMapScreenState();
 }
 
-class _MapScreenState extends State<MapScreen> {
-  GoogleMapController? _mapController;
-  LatLng? _currentPosition;
+class _RouteMapScreenState extends State<RouteMapScreen> {
+  GoogleMapController? mapController;
+  LatLng initialLocation = LatLng(19.9975, 73.7898); // Nashik center
 
-  final LatLng _destinationPosition = const LatLng(
-    19.0330, 73.0297, // Example destination: Navi Mumbai
-  );
+  final String googleAPIKey = 'AIzaSyDGnDHGbAKJl_B7A4O9hgc0LNpF_X9VGCs';
 
-  Set<Polyline> _polylines = {};
-  List<LatLng> _polylineCoordinates = [];
-  LatLng? driverLatLng;
-  LatLng? pickupLatLng;
+  Set<Polyline> polylines = {};
+  List<LatLng> polylineCoordinates = [];
 
-  @override
-  void initState() {
-    super.initState();
-    _fetchCurrentLocation();
-  }
+  Set<Marker> markers = {};
+  LatLng? startLocation;
+  LatLng? endLocation;
 
-  Future<void> _fetchCurrentLocation() async {
-    bool serviceEnabled;
-    LocationPermission permission;
+  void getDirectionsFromLatLng(LatLng start, LatLng end) async {
+    String url =
+        "https://maps.googleapis.com/maps/api/directions/json?origin=${start.latitude},${start.longitude}&destination=${end.latitude},${end.longitude}&key=$googleAPIKey";
 
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      await Geolocator.openLocationSettings();
-      return;
-    }
+    var response = await http.get(Uri.parse(url));
+    var json = jsonDecode(response.body);
 
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return;
-      }
-    }
+    if (json['status'] == 'OK') {
+      var points = json['routes'][0]['overview_polyline']['points'];
+      polylineCoordinates.clear();
 
-    if (permission == LocationPermission.deniedForever) {
-      return;
-    }
+      PolylinePoints polylinePoints = PolylinePoints();
+      List<PointLatLng> result = polylinePoints.decodePolyline(points);
 
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-
-    setState(() {
-      _currentPosition = LatLng(position.latitude, position.longitude);
-    });
-
-    _mapController?.animateCamera(CameraUpdate.newLatLng(_currentPosition!));
-
-    _getPolyline();
-  }
-
-  Future<void> _getPolyline() async {
-    if (_currentPosition == null) return;
-
-    PolylinePoints polylinePoints = PolylinePoints();
-    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      request: PolylineRequest(
-        origin: PointLatLng(driverLatLng!.latitude, driverLatLng!.longitude),
-        destination:
-            PointLatLng(pickupLatLng!.latitude, pickupLatLng!.longitude),
-        mode: TravelMode.driving,
-      ),
-    );
-
-    if (result.points.isNotEmpty) {
-      _polylineCoordinates.clear();
-      for (var point in result.points) {
-        _polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-      }
+      result.forEach((PointLatLng point) {
+        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+      });
 
       setState(() {
-        _polylines.add(Polyline(
-          polylineId: const PolylineId('route'),
-          color: Colors.blue,
-          width: 5,
-          points: _polylineCoordinates,
-        ));
+        polylines.clear();
+        polylines.add(
+          Polyline(
+            polylineId: PolylineId('route'),
+            points: polylineCoordinates,
+            width: 5,
+            color: Colors.blue,
+          ),
+        );
       });
+
+      mapController?.animateCamera(
+        CameraUpdate.newLatLngBounds(
+          LatLngBounds(
+            southwest: LatLng(
+              start.latitude < end.latitude ? start.latitude : end.latitude,
+              start.longitude < end.longitude ? start.longitude : end.longitude,
+            ),
+            northeast: LatLng(
+              start.latitude > end.latitude ? start.latitude : end.latitude,
+              start.longitude > end.longitude ? start.longitude : end.longitude,
+            ),
+          ),
+          50,
+        ),
+      );
+    } else {
+      print("Error fetching directions: ${json['error_message']}");
     }
+  }
+
+  void _onMapTap(LatLng tappedPoint) {
+    setState(() {
+      if (startLocation == null) {
+        startLocation = tappedPoint;
+        markers.add(Marker(markerId: MarkerId('start'), position: tappedPoint));
+      } else if (endLocation == null) {
+        endLocation = tappedPoint;
+        markers.add(Marker(markerId: MarkerId('end'), position: tappedPoint));
+
+        // Fetch directions now that both points are set
+        getDirectionsFromLatLng(startLocation!, endLocation!);
+      } else {
+        // Reset if tapped a third time
+        startLocation = tappedPoint;
+        endLocation = null;
+        markers.clear();
+        polylines.clear();
+        markers.add(Marker(markerId: MarkerId('start'), position: tappedPoint));
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const DrawerWidget(),
       appBar: AppBar(
+        backgroundColor: Color(0xFFB42318),
         centerTitle: true,
-        backgroundColor: const Color(0xFFB42318),
-        iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text(
-          "Map Screen",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-      ),
-      body: _currentPosition == null
-          ? const Center(child: CircularProgressIndicator())
-          : GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: _currentPosition!,
-                zoom: 14,
-              ),
-              onMapCreated: (controller) {
-                _mapController = controller;
-              },
-              myLocationEnabled: true,
-              myLocationButtonEnabled: true,
-              polylines: _polylines,
-              markers: {
-                Marker(
-                  markerId: const MarkerId('currentLocation'),
-                  position: _currentPosition!,
-                  infoWindow: const InfoWindow(title: 'Your Location'),
-                ),
-                Marker(
-                  markerId: const MarkerId('destination'),
-                  position: _destinationPosition,
-                  infoWindow: const InfoWindow(title: 'Destination'),
-                ),
-              },
+        title: const Text("RouteMapScreen ",
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+        leading: IconButton(
+            icon: SvgPicture.asset(
+              'assets/images/img_ic_down.svg',
+              color: Colors.white,
+              height: 24,
+              width: 24,
             ),
+            onPressed: () {
+              //   bottomNavController.selectedIndex.value = 0;
+              Get.offAll(() => HomeScreen());
+            }),
+      ),
+      body: GoogleMap(
+        initialCameraPosition: CameraPosition(
+          target: initialLocation,
+          zoom: 12,
+        ),
+        onMapCreated: (controller) {
+          mapController = controller;
+        },
+        markers: markers,
+        polylines: polylines,
+        onTap: _onMapTap,
+        myLocationEnabled: true,
+        myLocationButtonEnabled: true,
+      ),
     );
   }
 }

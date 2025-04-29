@@ -132,7 +132,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               style: TextStyle(fontSize: 16),
             ),
             leading: Icon(Icons.directions),
-            onTap: () => Get.to(MapScreen()),
+            onTap: () => Get.to(RouteMapScreen()),
           ),
           ListTile(
             title: Text(

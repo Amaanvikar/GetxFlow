@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_svg/svg.dart';
@@ -6,6 +8,7 @@ import 'package:getxflow/controller/location_controller.dart';
 import 'package:getxflow/models/ride_request_model.dart';
 import 'package:getxflow/screens/homescreen.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:http/http.dart' as http;
 
 class RideListDetailsScreen extends StatefulWidget {
   final RideRequest ride;
@@ -24,6 +27,8 @@ class _RideListDetailsScreenState extends State<RideListDetailsScreen> {
   GoogleMapController? mapController;
   Set<Polyline> polylines = {};
   List<LatLng> polylineCoordinates = [];
+  LatLng initialLocation = LatLng(19.9975, 73.7898);
+  Set<Marker> markers = {};
 
   LatLng? driverLatLng;
   LatLng? pickupLatLng;
@@ -34,44 +39,43 @@ class _RideListDetailsScreenState extends State<RideListDetailsScreen> {
     _rideDataMap = _rideRequestToMap(widget.ride);
 
     driverLatLng = LatLng(
-      double.tryParse(widget.ride.rideStartLat ?? '') ?? 0.0,
-      double.tryParse(widget.ride.rideStartLong ?? '') ?? 0.0,
+      double.tryParse(widget.ride.rideStartLat ?? '0')!,
+      double.tryParse(widget.ride.rideStartLong ?? '0')!,
     );
+
     pickupLatLng = LatLng(
-      double.tryParse(widget.ride.pickupLat ?? '') ?? 0.0,
-      double.tryParse(widget.ride.pickupLong ?? '') ?? 0.0,
+      double.tryParse(widget.ride.pickupLat ?? '0')!,
+      double.tryParse(widget.ride.pickupLong ?? '0')!,
     );
 
-    // Ensure valid coordinates before calling getPolyline
     if (driverLatLng != null && pickupLatLng != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        getPolyline();
-      });
+      getDirections(driverLatLng!, pickupLatLng!);
     }
-
-    // getPolyline();
+    // _getPolyline();
   }
 
-  Future<void> getPolyline() async {
-    PolylinePoints polylinePoints = PolylinePoints();
-    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      googleApiKey: 'AIzaSyCObi-eSXPyzGBVR9yQMabvA_lIruPYm8A',
-      request: PolylineRequest(
-        origin: PointLatLng(driverLatLng!.latitude, driverLatLng!.longitude),
-        destination:
-            PointLatLng(pickupLatLng!.latitude, pickupLatLng!.longitude),
-        mode: TravelMode.driving,
-      ),
-    );
+  final String googleAPIKey = 'AIzaSyDGnDHGbAKJl_B7A4O9hgc0LNpF_X9VGCs';
 
-    if (result.points.isNotEmpty) {
+  void getDirections(LatLng origin, LatLng destination) async {
+    final String url =
+        'https://maps.googleapis.com/maps/api/directions/json?origin=${origin.latitude},${origin.longitude}&destination=${destination.latitude},${destination.longitude}&key=$googleAPIKey';
+
+    var response = await http.get(Uri.parse(url));
+    var json = jsonDecode(response.body);
+
+    if (json['status'] == 'OK') {
+      var points = json['routes'][0]['overview_polyline']['points'];
       polylineCoordinates.clear();
-      for (var point in result.points) {
+
+      PolylinePoints polylinePoints = PolylinePoints();
+      List<PointLatLng> result = polylinePoints.decodePolyline(points);
+
+      for (PointLatLng point in result) {
         polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-        print("Added point: $point"); // Check the points
       }
 
       setState(() {
+        polylines.clear();
         polylines.add(
           Polyline(
             polylineId: PolylineId('route'),
@@ -81,6 +85,12 @@ class _RideListDetailsScreenState extends State<RideListDetailsScreen> {
           ),
         );
       });
+
+      mapController?.animateCamera(
+        CameraUpdate.newLatLngZoom(polylineCoordinates.first, 13),
+      );
+    } else {
+      print("Error fetching directions: ${json['error_message']}");
     }
   }
 
@@ -202,29 +212,28 @@ class _RideListDetailsScreenState extends State<RideListDetailsScreen> {
           SizedBox(
             height: 300,
             child: GoogleMap(
+              initialCameraPosition: CameraPosition(
+                target: initialLocation,
+                // target: pickupLatLng ?? LatLng(0, 0),
+                zoom: 16,
+              ),
               onMapCreated: (controller) {
                 mapController = controller;
-                if (driverLatLng != null && pickupLatLng != null) {
-                  getPolyline();
-                } else {
-                  print("Driver or Pickup location is null");
-                }
               },
-              initialCameraPosition: CameraPosition(
-                target: pickupLatLng ?? LatLng(0, 0),
-                zoom: 12,
-              ),
               polylines: polylines,
+              // markers: markers,
+              myLocationEnabled: true,
+              myLocationButtonEnabled: true,
               markers: {
                 Marker(
-                  markerId: MarkerId('driver'),
+                  markerId: const MarkerId('driver'),
                   position: driverLatLng!,
-                  infoWindow: InfoWindow(title: "Driver Location"),
+                  infoWindow: const InfoWindow(title: 'Driver Start Location'),
                 ),
                 Marker(
-                  markerId: MarkerId('pickup'),
+                  markerId: const MarkerId('pickup'),
                   position: pickupLatLng!,
-                  infoWindow: InfoWindow(title: "Pickup Location"),
+                  infoWindow: const InfoWindow(title: 'Pickup Location'),
                 ),
               },
             ),

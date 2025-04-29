@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:http/http.dart' as http;
 import 'package:location/location.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 
@@ -10,6 +13,12 @@ class LocationController extends GetxController {
   GoogleMapController? mapController;
   final RxSet<Polyline> polylines = <Polyline>{}.obs;
   final Rx<LatLng?> currentLatLng = Rxn<LatLng>();
+  List<LatLng> polylineCoordinates = [];
+  LatLng initialLocation = LatLng(
+    0,
+    0,
+  );
+  Set<Marker> markers = {};
 
   LatLng? driverLatLng;
   LatLng? pickupLatLng;
@@ -19,6 +28,44 @@ class LocationController extends GetxController {
     super.onInit();
     _getCurrentLocation();
     getPolyline();
+  }
+
+  final String googleAPIKey = 'AIzaSyDGnDHGbAKJl_B7A4O9hgc0LNpF_X9VGCs';
+
+  void getDirections(LatLng origin, LatLng destination) async {
+    final String url =
+        'https://maps.googleapis.com/maps/api/directions/json?origin=${origin.latitude},${origin.longitude}&destination=${destination.latitude},${destination.longitude}&key=$googleAPIKey';
+
+    var response = await http.get(Uri.parse(url));
+    var json = jsonDecode(response.body);
+
+    if (json['status'] == 'OK') {
+      var points = json['routes'][0]['overview_polyline']['points'];
+      polylineCoordinates.clear();
+
+      PolylinePoints polylinePoints = PolylinePoints();
+      List<PointLatLng> result = polylinePoints.decodePolyline(points);
+
+      for (PointLatLng point in result) {
+        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+      }
+
+      polylines.clear();
+      polylines.add(
+        Polyline(
+          polylineId: PolylineId('route'),
+          points: polylineCoordinates,
+          width: 5,
+          color: Colors.blue,
+        ),
+      );
+
+      mapController?.animateCamera(
+        CameraUpdate.newLatLngZoom(polylineCoordinates.first, 13),
+      );
+    } else {
+      print("Error fetching directions: ${json['error_message']}");
+    }
   }
 
   Future<void> getPolyline() async {

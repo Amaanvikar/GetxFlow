@@ -17,7 +17,7 @@ package="com.wind.hrcabdriver">
         android:icon="@mipmap/ic_launcher">
 
         <meta-data android:name="com.google.android.geo.API_KEY"
-           android:value="AIzaSyCObi-eSXPyzGBVR9yQMabvA_lIruPYm8A"/>
+           android:value="AIzaSyAjpguhxl_xYs0RHynAZnlVKL2RB0aKedk"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
