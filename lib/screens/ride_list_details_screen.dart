@@ -3,12 +3,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:getxflow/controller/location_controller.dart';
 import 'package:getxflow/models/ride_request_model.dart';
 import 'package:getxflow/screens/homescreen.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:location/location.dart';
 
 class RideListDetailsScreen extends StatefulWidget {
   final RideRequest ride;
@@ -33,36 +35,50 @@ class _RideListDetailsScreenState extends State<RideListDetailsScreen> {
   LatLng? driverLatLng;
   LatLng? pickupLatLng;
 
+  bool isLoading = false;
+
   @override
   void initState() {
     super.initState();
     _rideDataMap = _rideRequestToMap(widget.ride);
-
-    driverLatLng = LatLng(
-      double.tryParse(widget.ride.rideStartLat ?? '0')!,
-      double.tryParse(widget.ride.rideStartLong ?? '0')!,
-    );
-
+    print("Ride Data Map: ${widget.ride.toMap()}");
     pickupLatLng = LatLng(
       double.tryParse(widget.ride.pickupLat ?? '0')!,
       double.tryParse(widget.ride.pickupLong ?? '0')!,
     );
 
-    if (driverLatLng != null && pickupLatLng != null) {
-      getDirections(driverLatLng!, pickupLatLng!);
+    if (pickupLatLng != null) {
+      print("Driver Lat LNG: $driverLatLng");
+      print("Pickup Lat LNG: $pickupLatLng");
+      getDirections(null, pickupLatLng!);
     }
     // _getPolyline();
   }
 
   final String googleAPIKey = 'AIzaSyDGnDHGbAKJl_B7A4O9hgc0LNpF_X9VGCs';
 
-  void getDirections(LatLng origin, LatLng destination) async {
+  void getDirections(LatLng? origin, LatLng destination) async {
+    setState(() {
+      isLoading = true;
+    });
+    final Location location = Location();
+    if (origin == null) {
+      print("Getting current location, ${origin}");
+      origin = await location.getLocation().then((value) {
+        return LatLng(value.latitude!, value.longitude!);
+      });
+      setState(() {
+        driverLatLng = origin;
+      });
+    }
     final String url =
-        'https://maps.googleapis.com/maps/api/directions/json?origin=${origin.latitude},${origin.longitude}&destination=${destination.latitude},${destination.longitude}&key=$googleAPIKey';
+        'https://maps.googleapis.com/maps/api/directions/json?origin=${origin?.latitude},${origin?.longitude}&destination=${destination.latitude},${destination.longitude}&key=$googleAPIKey';
 
+    print("URL: $url");
     var response = await http.get(Uri.parse(url));
     var json = jsonDecode(response.body);
 
+    print("Response from API : $json");
     if (json['status'] == 'OK') {
       var points = json['routes'][0]['overview_polyline']['points'];
       polylineCoordinates.clear();
@@ -92,6 +108,9 @@ class _RideListDetailsScreenState extends State<RideListDetailsScreen> {
     } else {
       print("Error fetching directions: ${json['error_message']}");
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   // Convert the RideRequest object into a map for dynamic display
@@ -205,66 +224,72 @@ class _RideListDetailsScreenState extends State<RideListDetailsScreen> {
           )
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          _buildProfileHeader(),
-          SizedBox(
-            height: 300,
-            child: GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: initialLocation,
-                // target: pickupLatLng ?? LatLng(0, 0),
-                zoom: 16,
-              ),
-              onMapCreated: (controller) {
-                mapController = controller;
-              },
-              polylines: polylines,
-              // markers: markers,
-              myLocationEnabled: true,
-              myLocationButtonEnabled: true,
-              markers: {
-                Marker(
-                  markerId: const MarkerId('driver'),
-                  position: driverLatLng!,
-                  infoWindow: const InfoWindow(title: 'Driver Start Location'),
+      body: (isLoading)
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                _buildProfileHeader(),
+                SizedBox(
+                  height: 300,
+                  child: GoogleMap(
+                    initialCameraPosition: CameraPosition(
+                      target: driverLatLng!,
+                      // target: pickupLatLng ?? LatLng(0, 0),
+                      zoom: 16,
+                    ),
+                    onMapCreated: (controller) {
+                      mapController = controller;
+                    },
+                    polylines: polylines,
+                    // markers: markers,
+                    myLocationEnabled: true,
+                    myLocationButtonEnabled: true,
+                    markers: {
+                      Marker(
+                        markerId: const MarkerId('driver'),
+                        position: driverLatLng!,
+                        infoWindow:
+                            const InfoWindow(title: 'Driver Start Location'),
+                      ),
+                      Marker(
+                        markerId: const MarkerId('pickup'),
+                        position: pickupLatLng!,
+                        infoWindow: const InfoWindow(title: 'Pickup Location'),
+                      ),
+                    },
+                  ),
                 ),
-                Marker(
-                  markerId: const MarkerId('pickup'),
-                  position: pickupLatLng!,
-                  infoWindow: const InfoWindow(title: 'Pickup Location'),
-                ),
-              },
-            ),
-          ),
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 10,
-                  offset: Offset(0, 4),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 10,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: ListView.separated(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: _rideDataMap.length,
+                    separatorBuilder: (_, __) => Divider(),
+                    itemBuilder: (context, index) {
+                      final entry = _rideDataMap.entries.elementAt(index);
+                      return _buildRow(
+                          entry.key, entry.value?.toString() ?? '');
+                    },
+                  ),
                 ),
               ],
             ),
-            child: ListView.separated(
-              physics: NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: _rideDataMap.length,
-              separatorBuilder: (_, __) => Divider(),
-              itemBuilder: (context, index) {
-                final entry = _rideDataMap.entries.elementAt(index);
-                return _buildRow(entry.key, entry.value?.toString() ?? '');
-              },
-            ),
-          ),
-        ],
-      ),
     );
   }
 
