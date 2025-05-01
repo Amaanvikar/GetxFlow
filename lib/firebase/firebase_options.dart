@@ -15,7 +15,7 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAjpguhxl_xYs0RHynAZnlVKL2RB0aKedk',
+    apiKey: 'AIzaSyDGnDHGbAKJl_B7A4O9hgc0LNpF_X9VGCs',
     appId: '1:1087956059102:android:03e5e29d09e65ac645934f',
     messagingSenderId: '1087956059102',
     projectId: 'hrcabdriver',

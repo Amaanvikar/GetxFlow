@@ -3,7 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:getxflow/controller/driver_ride_controller.dart';
 import 'package:getxflow/screens/homescreen.dart';
-import 'package:getxflow/screens/ride_list_details_screen.dart';
 
 class DriverRideListScreen extends StatefulWidget {
   const DriverRideListScreen({super.key});
@@ -169,11 +168,11 @@ class _DriverRideListScreenState extends State<DriverRideListScreen> {
                       ),
                       trailing: GestureDetector(
                         onTap: () {
-                          // Get.to(HomeScreen());
-                          Get.to(
-                            RideListDetailsScreen(ride: ride),
-                            arguments: ride,
-                          );
+                          Get.to(HomeScreen(ride: ride));
+                          // Get.to(
+                          //   RideListDetailsScreen(ride: ride),
+                          //   arguments: ride,
+                          // );
                         },
                         child: const Icon(
                           Icons.arrow_forward_ios_rounded,
