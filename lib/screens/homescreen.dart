@@ -33,9 +33,16 @@ class _HomeScreenState extends State<HomeScreen> {
   LatLng? driverLatLng;
   bool isLoading = false;
 
+  BitmapDescriptor? carIcon;
+  BitmapDescriptor? pickupIcon;
+  Marker? carMarker;
+
   @override
   void initState() {
     super.initState();
+    locationController.startLocationUpdates();
+    _loadCarIcon();
+
     if (widget.ride != null) {
       pickupLatLng = LatLng(
         double.tryParse(widget.ride!.pickupLat ?? '0')!,
@@ -47,10 +54,42 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     }
 
+    // Listen for location updates to update car marker
+    locationController.currentLatLng.listen((position) {
+      if (position != null) {
+        _updateCarMarker(position);
+        if (pickupLatLng != null) {
+          getDirections(position, pickupLatLng!);
+        }
+      }
+    });
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.ride != null) {
         // _showRideDetailsDialog(widget.ride);
       }
+    });
+  }
+
+  void _loadCarIcon() async {
+    carIcon = await BitmapDescriptor.fromAssetImage(
+      const ImageConfiguration(size: Size(48, 48)),
+      'assets/images/redcar.png',
+    );
+  }
+
+  void _updateCarMarker(LatLng position) {
+    if (carIcon == null) return;
+
+    setState(() {
+      driverLatLng = position;
+      carMarker = Marker(
+        markerId: const MarkerId('car'),
+        position: position,
+        icon: carIcon!,
+        anchor: const Offset(0.5, 0.5),
+        infoWindow: const InfoWindow(title: 'Your Car'),
+      );
     });
   }
 
@@ -110,58 +149,24 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  // void _showRideDetailsDialog(dynamic ride) {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     shape: const RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-  //     ),
-  //     isScrollControlled: true,
-  //     builder: (context) {
-  //       return Padding(
-  //         padding: const EdgeInsets.all(20.0),
-  //         child: SafeArea(
-  //           child: Column(
-  //             mainAxisSize: MainAxisSize.min,
-  //             crossAxisAlignment: CrossAxisAlignment.start,
-  //             children: [
-  //               Center(
-  //                 child: Container(
-  //                   height: 4,
-  //                   width: 40,
-  //                   margin: const EdgeInsets.only(bottom: 12),
-  //                   decoration: BoxDecoration(
-  //                     color: Colors.grey[400],
-  //                     borderRadius: BorderRadius.circular(10),
-  //                   ),
-  //                 ),
-  //               ),
-  //               Row(
-  //                 children: [
-  //                   Text("Ride Details",
-  //                       style: Theme.of(context).textTheme.titleLarge),
-  //                   Spacer(),
-  //                   IconButton(
-  //                     icon: Icon(Icons.close, color: Colors.grey),
-  //                     onPressed: () {
-  //                       Navigator.of(context).pop(); // Close the drawer
-  //                     },
-  //                   )
-  //                 ],
-  //               ),
-  //               const SizedBox(height: 10),
-  //               Text("Ride No: ${ride.rideBookingNumber}"),
-  //               Text("Pickup Location: ${ride.pickupLocation}"),
-  //               Text("Drop Location: ${ride.dropLocation}"),
-  //               Text("Fare: ₹${ride.totalRideAmount}"),
-  //               const SizedBox(height: 20),
-  //             ],
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
+  void _onStartRidePressed() {
+    if (driverLatLng == null || carIcon == null) return;
+
+    final carMarker = Marker(
+      markerId: const MarkerId('Car'),
+      position: driverLatLng!,
+      icon: carIcon!,
+      infoWindow: const InfoWindow(title: 'Car is here'),
+    );
+
+    setState(() {
+      // Remove old car marker if needed
+      polylines = Set<Polyline>.from(polylines); // Keep current polylines
+      mapController?.animateCamera(CameraUpdate.newLatLng(driverLatLng!));
+      // Add car marker
+      // locationController.setCarMarker(carMarker);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -252,17 +257,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 myLocationButtonEnabled: true,
                 polylines: polylines,
                 markers: {
-                  if (driverLatLng != null)
-                    Marker(
-                      markerId: const MarkerId('Driver'),
-                      position: driverLatLng!,
-                      icon: BitmapDescriptor.defaultMarker,
-                    ),
+                  if (carMarker != null) carMarker!,
                   if (pickupLatLng != null)
                     Marker(
-                      markerId: const MarkerId('Pick up'),
+                      markerId: const MarkerId('pickup'),
                       position: pickupLatLng!,
-                      icon: BitmapDescriptor.defaultMarker,
+                      icon: pickupIcon ??
+                          BitmapDescriptor.defaultMarkerWithHue(
+                              BitmapDescriptor.hueRed),
+                      infoWindow: const InfoWindow(title: 'Pickup Location'),
                     ),
                 },
               ),
@@ -277,51 +280,111 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: GestureDetector(
                   // onTap: () => _showRideDetailsDialog(widget.ride!),
                   child: Card(
-                    elevation: 8,
+                    elevation: 10,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     color: Colors.white,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 14, horizontal: 16),
+                      padding: const EdgeInsets.all(16),
                       child: Column(
-                        mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            "Ride No: ${widget.ride!.rideBookingNumber}",
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
+                          Row(
+                            children: [
+                              const Icon(Icons.directions_car,
+                                  color: Colors.black87),
+                              const SizedBox(width: 8),
+                              Text(
+                                "Ride #${widget.ride!.rideBookingNumber}",
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              const Icon(Icons.location_pin,
+                                  color: Colors.green),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  widget.ride!.pickupLocation ??
+                                      "Pickup location",
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                           const SizedBox(height: 6),
-                          Text(
-                            "Pickup: ${widget.ride!.pickupLocation}",
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          Text(
-                            "Drop: ${widget.ride!.dropLocation}",
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          Text(
-                            "Fare: ₹${widget.ride!.totalRideAmount}",
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
+                          Row(
+                            children: [
+                              const Icon(Icons.flag, color: Colors.redAccent),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  widget.ride!.dropLocation ?? "Drop location",
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                           const SizedBox(height: 6),
-                          // Text(
-                          //   "Tap for full details",
-                          //   style: TextStyle(
-                          //       color: Colors.blueGrey.shade600, fontSize: 12),
-                          // ),
+                          Row(
+                            children: [
+                              const Icon(Icons.currency_rupee,
+                                  color: Colors.orange),
+                              const SizedBox(width: 6),
+                              Text(
+                                "${widget.ride!.totalRideAmount}",
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton.icon(
+                              onPressed: _onStartRidePressed,
+                              icon: const Icon(Icons.play_arrow,
+                                  color: Colors.white),
+                              label: const Text(
+                                'Start Ride',
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.white),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 14),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
                   ),
                 ),
-              ),
+              )
           ],
         );
       }),

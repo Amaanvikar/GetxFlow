@@ -185,4 +185,17 @@ class LocationController extends GetxController {
       );
     }
   }
+
+  void startLocationUpdates() {
+    Location location = Location();
+
+    location.changeSettings(interval: 1000); // every 1 sec
+
+    location.onLocationChanged.listen((locationData) {
+      if (locationData.latitude != null && locationData.longitude != null) {
+        currentLatLng.value =
+            LatLng(locationData.latitude!, locationData.longitude!);
+      }
+    });
+  }
 }
