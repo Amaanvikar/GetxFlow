@@ -46,6 +46,12 @@ class _HomeScreenState extends State<HomeScreen> {
         getDirections(null, pickupLatLng!);
       }
     }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.ride != null) {
+        // _showRideDetailsDialog(widget.ride);
+      }
+    });
   }
 
   void getDirections(LatLng? origin, LatLng destination) async {
@@ -103,6 +109,59 @@ class _HomeScreenState extends State<HomeScreen> {
       isLoading = false;
     });
   }
+
+  // void _showRideDetailsDialog(dynamic ride) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     shape: const RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+  //     ),
+  //     isScrollControlled: true,
+  //     builder: (context) {
+  //       return Padding(
+  //         padding: const EdgeInsets.all(20.0),
+  //         child: SafeArea(
+  //           child: Column(
+  //             mainAxisSize: MainAxisSize.min,
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: [
+  //               Center(
+  //                 child: Container(
+  //                   height: 4,
+  //                   width: 40,
+  //                   margin: const EdgeInsets.only(bottom: 12),
+  //                   decoration: BoxDecoration(
+  //                     color: Colors.grey[400],
+  //                     borderRadius: BorderRadius.circular(10),
+  //                   ),
+  //                 ),
+  //               ),
+  //               Row(
+  //                 children: [
+  //                   Text("Ride Details",
+  //                       style: Theme.of(context).textTheme.titleLarge),
+  //                   Spacer(),
+  //                   IconButton(
+  //                     icon: Icon(Icons.close, color: Colors.grey),
+  //                     onPressed: () {
+  //                       Navigator.of(context).pop(); // Close the drawer
+  //                     },
+  //                   )
+  //                 ],
+  //               ),
+  //               const SizedBox(height: 10),
+  //               Text("Ride No: ${ride.rideBookingNumber}"),
+  //               Text("Pickup Location: ${ride.pickupLocation}"),
+  //               Text("Drop Location: ${ride.dropLocation}"),
+  //               Text("Fare: ₹${ride.totalRideAmount}"),
+  //               const SizedBox(height: 20),
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -180,31 +239,90 @@ class _HomeScreenState extends State<HomeScreen> {
           return const Center(child: CircularProgressIndicator());
         }
 
-        return SafeArea(
-          child: GoogleMap(
-            onMapCreated: locationController.setMapController,
-            initialCameraPosition: CameraPosition(
-              target: position,
-              zoom: 16,
+        return Stack(
+          children: [
+            SafeArea(
+              child: GoogleMap(
+                onMapCreated: locationController.setMapController,
+                initialCameraPosition: CameraPosition(
+                  target: position,
+                  zoom: 16,
+                ),
+                myLocationEnabled: true,
+                myLocationButtonEnabled: true,
+                polylines: polylines,
+                markers: {
+                  if (driverLatLng != null)
+                    Marker(
+                      markerId: const MarkerId('Driver'),
+                      position: driverLatLng!,
+                      icon: BitmapDescriptor.defaultMarker,
+                    ),
+                  if (pickupLatLng != null)
+                    Marker(
+                      markerId: const MarkerId('Pick up'),
+                      position: pickupLatLng!,
+                      icon: BitmapDescriptor.defaultMarker,
+                    ),
+                },
+              ),
             ),
-            myLocationEnabled: true,
-            myLocationButtonEnabled: true,
-            polylines: polylines,
-            markers: {
-              if (driverLatLng != null)
-                Marker(
-                  markerId: const MarkerId('Driver'),
-                  position: driverLatLng!,
-                  icon: BitmapDescriptor.defaultMarker,
+
+            // Optional Ride Summary Card
+            if (widget.ride != null)
+              Positioned(
+                bottom: 20,
+                left: 20,
+                right: 20,
+                child: GestureDetector(
+                  // onTap: () => _showRideDetailsDialog(widget.ride!),
+                  child: Card(
+                    elevation: 8,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    color: Colors.white,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 14, horizontal: 16),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Ride No: ${widget.ride!.rideBookingNumber}",
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            "Pickup: ${widget.ride!.pickupLocation}",
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          Text(
+                            "Drop: ${widget.ride!.dropLocation}",
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          Text(
+                            "Fare: ₹${widget.ride!.totalRideAmount}",
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          const SizedBox(height: 6),
+                          // Text(
+                          //   "Tap for full details",
+                          //   style: TextStyle(
+                          //       color: Colors.blueGrey.shade600, fontSize: 12),
+                          // ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-              if (pickupLatLng != null)
-                Marker(
-                  markerId: const MarkerId('Pick up'),
-                  position: pickupLatLng!,
-                  icon: BitmapDescriptor.defaultMarker,
-                ),
-            },
-          ),
+              ),
+          ],
         );
       }),
     );

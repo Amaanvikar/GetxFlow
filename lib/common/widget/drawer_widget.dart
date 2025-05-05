@@ -31,49 +31,53 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             return Container(
               padding: EdgeInsets.symmetric(vertical: 40, horizontal: 16),
               color: Colors.white,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  CircleAvatar(
-                    radius: 30,
-                    backgroundColor: Colors.grey[200],
-                    child: SvgPicture.asset(
-                      'assets/images/img_nav_profile.svg',
-                      width: 30,
-                      height: 30,
-                      fit: BoxFit.cover,
+              child: SingleChildScrollView(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CircleAvatar(
+                      radius: 30,
+                      backgroundColor: Colors.grey[200],
+                      child: SvgPicture.asset(
+                        'assets/images/img_nav_profile.svg',
+                        width: 30,
+                        height: 30,
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                  ),
-                  SizedBox(width: 16),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "${profile?.firstName ?? ''} ${profile?.lastName ?? ''}",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                    SizedBox(width: 16),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "${profile?.firstName ?? ''} ${profile?.lastName ?? ''}",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        profile?.email ?? '',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.black,
+                        const SizedBox(height: 2),
+                        Text(
+                          profile?.email ?? '',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black,
+                          ),
                         ),
+                      ],
+                    ),
+                    Spacer(),
+                    Flexible(
+                      child: IconButton(
+                        icon: Icon(Icons.close, color: Colors.grey),
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Close the drawer
+                        },
                       ),
-                    ],
-                  ),
-                  Spacer(),
-                  IconButton(
-                    icon: Icon(Icons.close, color: Colors.grey),
-                    onPressed: () {
-                      Navigator.of(context).pop(); // Close the drawer
-                    },
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
             );
           }),
