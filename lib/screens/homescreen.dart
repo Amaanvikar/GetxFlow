@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:getxflow/common/widget/drawer_widget.dart';
 import 'package:getxflow/controller/driver_status_controller.dart';
 import 'package:getxflow/controller/location_controller.dart';
@@ -32,6 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
   LatLng? pickupLatLng;
   LatLng? driverLatLng;
   bool isLoading = false;
+  bool _isExpanded = true;
 
   BitmapDescriptor? carIcon;
   BitmapDescriptor? pickupIcon;
@@ -61,6 +64,9 @@ class _HomeScreenState extends State<HomeScreen> {
         if (pickupLatLng != null) {
           getDirections(position, pickupLatLng!);
         }
+        mapController?.animateCamera(
+          CameraUpdate.newLatLng(position),
+        );
       }
     });
 
@@ -73,13 +79,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _loadCarIcon() async {
     carIcon = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(size: Size(48, 48)),
+      const ImageConfiguration(size: Size(18, 18)),
       'assets/images/redcar.png',
     );
   }
 
   void _updateCarMarker(LatLng position) {
     if (carIcon == null) return;
+
+    if (driverLatLng != null &&
+        _calculateDistance(driverLatLng!, position) < 5) {
+      return;
+    }
 
     setState(() {
       driverLatLng = position;
@@ -88,9 +99,16 @@ class _HomeScreenState extends State<HomeScreen> {
         position: position,
         icon: carIcon!,
         anchor: const Offset(0.5, 0.5),
+        rotation: locationController.currentHeading.value!,
         infoWindow: const InfoWindow(title: 'Your Car'),
       );
     });
+  }
+
+  double _calculateDistance(LatLng pos1, LatLng pos2) {
+    // Simple distance calculation (in meters)
+    return Geolocator.distanceBetween(
+        pos1.latitude, pos1.longitude, pos2.latitude, pos2.longitude);
   }
 
   void getDirections(LatLng? origin, LatLng destination) async {
@@ -156,6 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
       markerId: const MarkerId('Car'),
       position: driverLatLng!,
       icon: carIcon!,
+      flat: true,
       infoWindow: const InfoWindow(title: 'Car is here'),
     );
 
@@ -252,8 +271,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 initialCameraPosition: CameraPosition(
                   target: position,
                   zoom: 16,
+                  bearing: locationController.currentHeading.value ?? 0.0,
                 ),
-                myLocationEnabled: true,
+                myLocationEnabled: false,
                 myLocationButtonEnabled: true,
                 polylines: polylines,
                 markers: {
@@ -264,7 +284,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       position: pickupLatLng!,
                       icon: pickupIcon ??
                           BitmapDescriptor.defaultMarkerWithHue(
-                              BitmapDescriptor.hueRed),
+                              BitmapDescriptor.hueGreen),
+                      flat: true,
                       infoWindow: const InfoWindow(title: 'Pickup Location'),
                     ),
                 },
@@ -278,116 +299,199 @@ class _HomeScreenState extends State<HomeScreen> {
                 left: 20,
                 right: 20,
                 child: GestureDetector(
-                  // onTap: () => _showRideDetailsDialog(widget.ride!),
-                  child: Card(
-                    elevation: 10,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
+                  onTap: () {
+                    setState(() {
+                      _isExpanded = !_isExpanded;
+                    });
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius:
+                          BorderRadius.circular(_isExpanded ? 20 : 50),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 10,
+                          spreadRadius: 2,
+                        ),
+                      ],
                     ),
-                    color: Colors.white,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              const Icon(Icons.directions_car,
-                                  color: Colors.black87),
-                              const SizedBox(width: 8),
-                              Text(
-                                "Ride #${widget.ride!.rideBookingNumber}",
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                  color: Colors.black87,
+                    padding: EdgeInsets.all(_isExpanded ? 16 : 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Header with minimize/maximize button
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black87,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.directions_car,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          Row(
-                            children: [
-                              const Icon(Icons.location_pin,
-                                  color: Colors.green),
-                              const SizedBox(width: 6),
-                              Expanded(
-                                child: Text(
-                                  widget.ride!.pickupLocation ??
-                                      "Pickup location",
+                                const SizedBox(width: 12),
+                                Text(
+                                  "Ride #${widget.ride!.rideBookingNumber}",
                                   style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
                                     color: Colors.black87,
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 6),
-                          Row(
-                            children: [
-                              const Icon(Icons.flag, color: Colors.redAccent),
-                              const SizedBox(width: 6),
-                              Expanded(
-                                child: Text(
-                                  widget.ride!.dropLocation ?? "Drop location",
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 6),
-                          Row(
-                            children: [
-                              const Icon(Icons.currency_rupee,
-                                  color: Colors.orange),
-                              const SizedBox(width: 6),
-                              Text(
-                                "${widget.ride!.totalRideAmount}",
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                            ],
-                          ),
+                              ],
+                            ),
+                            Icon(
+                              _isExpanded
+                                  ? Icons.keyboard_arrow_down
+                                  : Icons.keyboard_arrow_up,
+                              color: Colors.grey,
+                              size: 28,
+                            ),
+                          ],
+                        ),
+
+                        if (_isExpanded) ...[
                           const SizedBox(height: 16),
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton.icon(
-                              onPressed: _onStartRidePressed,
-                              icon: const Icon(Icons.play_arrow,
-                                  color: Colors.white),
-                              label: const Text(
-                                'Start Ride',
-                                style: TextStyle(
-                                    fontSize: 16, color: Colors.white),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green,
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 14),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
+                          // Pickup Location
+                          _buildLocationRow(
+                            icon: Icons.circle,
+                            iconColor: Colors.green,
+                            text: widget.ride!.pickupLocation ??
+                                "Pickup location",
+                            isFirst: true,
+                          ),
+
+                          // Vertical connector line
+                          Padding(
+                            padding: const EdgeInsets.only(left: 11),
+                            child: Container(
+                              height: 20,
+                              width: 2,
+                              color: Colors.grey[300],
                             ),
                           ),
+
+                          // Drop Location
+                          _buildLocationRow(
+                            icon: Icons.location_on,
+                            iconColor: Colors.redAccent,
+                            text: widget.ride!.dropLocation ?? "Drop location",
+                            isFirst: false,
+                          ),
+
+                          const SizedBox(height: 16),
+                          // Fare and button
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[100],
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.currency_rupee,
+                                      color: Colors.black87,
+                                      size: 16,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      "${widget.ride!.totalRideAmount}",
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const Spacer(),
+                              SizedBox(
+                                width: 150,
+                                child: ElevatedButton(
+                                  onPressed: _onStartRidePressed,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.black,
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 12),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  child: const Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.play_arrow,
+                                          color: Colors.white, size: 20),
+                                      SizedBox(width: 8),
+                                      Text(
+                                        'Start Ride',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ],
-                      ),
+                      ],
                     ),
                   ),
                 ),
-              )
+              ),
           ],
         );
       }),
     );
   }
+}
+
+Widget _buildLocationRow({
+  required IconData icon,
+  required Color iconColor,
+  required String text,
+  required bool isFirst,
+}) {
+  return Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Icon(
+        icon,
+        color: iconColor,
+        size: isFirst ? 18 : 20,
+      ),
+      const SizedBox(width: 12),
+      Expanded(
+        child: Text(
+          text,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: Colors.black87,
+          ),
+        ),
+      ),
+    ],
+  );
 }

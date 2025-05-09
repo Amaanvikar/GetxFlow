@@ -13,6 +13,9 @@ class LocationController extends GetxController {
   GoogleMapController? mapController;
   final RxSet<Polyline> polylines = <Polyline>{}.obs;
   final Rx<LatLng?> currentLatLng = Rxn<LatLng>();
+  final Rx<double?> currentHeading = Rxn<double>();
+
+  Rxn<double> heading = Rxn<double>(); // Track heading for rotation
   List<LatLng> polylineCoordinates = [];
   LatLng initialLocation = LatLng(
     0,
@@ -131,10 +134,13 @@ class LocationController extends GetxController {
         if (newLocation.latitude != null && newLocation.longitude != null) {
           currentLatLng.value =
               LatLng(newLocation.latitude!, newLocation.longitude!);
-          if (mapController != null) {
-            mapController!.animateCamera(
-              CameraUpdate.newLatLng(currentLatLng.value!),
-            );
+          if (newLocation.heading != null) {
+            currentHeading.value = newLocation.heading;
+            if (mapController != null) {
+              mapController!.animateCamera(
+                CameraUpdate.newLatLng(currentLatLng.value!),
+              );
+            }
           }
         }
       });
