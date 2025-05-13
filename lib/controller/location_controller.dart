@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -25,6 +27,74 @@ class LocationController extends GetxController {
 
   LatLng? driverLatLng;
   LatLng? pickupLatLng;
+
+  Rx<BitmapDescriptor> pickupMarkerIcon =
+      BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen).obs;
+
+  StreamSubscription<Position>? positionStream;
+  bool hasArrivedAtPickup = false;
+  double pickupRadius = 50.0;
+
+  void checkProximityToPickup(LatLng currentPosition, LatLng pickupPosition) {
+    double distance = Geolocator.distanceBetween(
+      currentPosition.latitude,
+      currentPosition.longitude,
+      pickupPosition.latitude,
+      pickupPosition.longitude,
+    );
+    debugPrint('Distance to pickup: ${distance.toStringAsFixed(2)} meters');
+
+    if (distance <= pickupRadius && !hasArrivedAtPickup) {
+      debugPrint('Driver arrived at pickup location!');
+      updatePickupMarker(true);
+      _showArrivalNotification();
+    } else if (distance > pickupRadius && hasArrivedAtPickup) {
+      debugPrint('Driver left pickup zone');
+      updatePickupMarker(false);
+    }
+  }
+
+  void updatePickupMarker(bool hasArrived) {
+    hasArrivedAtPickup = hasArrived;
+    pickupMarkerIcon.value = hasArrived
+        ? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue)
+        : BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen);
+    update();
+  }
+
+  void _showArrivalNotification() {
+    // You can use GetX to show a snackbar or dialog
+    Get.snackbar(
+      'Arrival Notification',
+      'You have arrived at the pickup location',
+      snackPosition: SnackPosition.TOP,
+      backgroundColor: Colors.green,
+      colorText: Colors.white,
+    );
+  }
+
+  void startGeoFenceMonitoring(LatLng pickupPosition) {
+    // Cancel any existing stream
+    positionStream?.cancel();
+
+    positionStream = Geolocator.getPositionStream(
+      locationSettings: LocationSettings(
+        // accuracy: LocationAccuracy.high,
+        distanceFilter: 10, // Update every 10 meters
+      ),
+    ).listen((Position position) {
+      checkProximityToPickup(
+        LatLng(position.latitude, position.longitude),
+        pickupPosition,
+      );
+    });
+  }
+
+  void stopGeoFenceMonitoring() {
+    positionStream?.cancel();
+    positionStream = null;
+    hasArrivedAtPickup = false;
+  }
 
   @override
   void onInit() {

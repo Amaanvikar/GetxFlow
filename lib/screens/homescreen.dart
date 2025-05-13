@@ -39,6 +39,22 @@ class _HomeScreenState extends State<HomeScreen> {
   BitmapDescriptor? carIcon;
   BitmapDescriptor? pickupIcon;
   Marker? carMarker;
+  RxBool hasArrivedAtPickup = false.obs;
+
+  Set<Circle> get geoFenceCircles {
+    if (pickupLatLng == null) return {};
+
+    return {
+      Circle(
+        circleId: const CircleId('pickupZone'),
+        center: pickupLatLng!,
+        radius: locationController.pickupRadius,
+        strokeWidth: 2,
+        strokeColor: Colors.blue,
+        fillColor: Colors.blue.withOpacity(0.15),
+      ),
+    };
+  }
 
   @override
   void initState() {
@@ -54,6 +70,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
       if (pickupLatLng != null) {
         getDirections(null, pickupLatLng!);
+
+        locationController
+            .startGeoFenceMonitoring(pickupLatLng!); //start geo-fencing
       }
     }
 
@@ -75,6 +94,12 @@ class _HomeScreenState extends State<HomeScreen> {
         // _showRideDetailsDialog(widget.ride);
       }
     });
+  }
+
+  @override
+  void dispose() {
+    locationController.stopGeoFenceMonitoring();
+    super.dispose();
   }
 
   void _loadCarIcon() async {
@@ -282,9 +307,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Marker(
                       markerId: const MarkerId('pickup'),
                       position: pickupLatLng!,
-                      icon: pickupIcon ??
-                          BitmapDescriptor.defaultMarkerWithHue(
-                              BitmapDescriptor.hueGreen),
+                      icon: locationController.pickupMarkerIcon.value,
                       flat: true,
                       infoWindow: const InfoWindow(title: 'Pickup Location'),
                     ),
@@ -332,10 +355,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Container(
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
-                                    color: Colors.black87,
+                                    color: locationController.hasArrivedAtPickup
+                                        ? Colors.green
+                                        : Colors.black87,
                                     shape: BoxShape.circle,
                                   ),
-                                  child: const Icon(
+                                  child: Icon(
                                     Icons.directions_car,
                                     color: Colors.white,
                                     size: 20,
@@ -344,10 +369,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                 const SizedBox(width: 12),
                                 Text(
                                   "Ride #${widget.ride!.rideBookingNumber}",
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 18,
-                                    color: Colors.black87,
+                                    color: locationController.hasArrivedAtPickup
+                                        ? Colors.green
+                                        : Colors.black87,
                                   ),
                                 ),
                               ],
@@ -364,10 +391,40 @@ class _HomeScreenState extends State<HomeScreen> {
 
                         if (_isExpanded) ...[
                           const SizedBox(height: 16),
+
+                          // Arrival Status Indicator
+                          if (locationController.hasArrivedAtPickup)
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 8),
+                              margin: const EdgeInsets.only(bottom: 12),
+                              decoration: BoxDecoration(
+                                color: Colors.green.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: Colors.green),
+                              ),
+                              child: Row(
+                                children: const [
+                                  Icon(Icons.check_circle,
+                                      color: Colors.green, size: 20),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    'Arrived at pickup location',
+                                    style: TextStyle(
+                                      color: Colors.green,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
                           // Pickup Location
                           _buildLocationRow(
                             icon: Icons.circle,
-                            iconColor: Colors.green,
+                            iconColor: locationController.hasArrivedAtPickup
+                                ? Colors.green
+                                : Colors.grey,
                             text: widget.ride!.pickupLocation ??
                                 "Pickup location",
                             isFirst: true,
@@ -411,7 +468,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                     const SizedBox(width: 4),
                                     Text(
-                                      "${widget.ride!.totalRideAmount}",
+                                      "${widget.ride!.approximateTotalAmount}",
                                       style: const TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -427,22 +484,32 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: ElevatedButton(
                                   onPressed: _onStartRidePressed,
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.black,
+                                    backgroundColor:
+                                        locationController.hasArrivedAtPickup
+                                            ? Colors.green
+                                            : Colors.black,
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 12),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                   ),
-                                  child: const Row(
+                                  child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Icon(Icons.play_arrow,
-                                          color: Colors.white, size: 20),
-                                      SizedBox(width: 8),
+                                      Icon(
+                                        locationController.hasArrivedAtPickup
+                                            ? Icons.check
+                                            : Icons.play_arrow,
+                                        color: Colors.white,
+                                        size: 20,
+                                      ),
+                                      const SizedBox(width: 8),
                                       Text(
-                                        'Start Ride',
-                                        style: TextStyle(
+                                        locationController.hasArrivedAtPickup
+                                            ? 'Start Ride'
+                                            : 'Approaching',
+                                        style: const TextStyle(
                                           fontSize: 16,
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
