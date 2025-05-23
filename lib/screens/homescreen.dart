@@ -8,7 +8,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:HrCabDriver/common/widget/drawer_widget.dart';
 import 'package:HrCabDriver/controller/driver_status_controller.dart';
 import 'package:HrCabDriver/controller/location_controller.dart';
-import 'package:HrCabDriver/models/ride_request_model.dart';
+import 'package:HrCabDriver/Api/models/ride_request_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:location/location.dart';
@@ -22,8 +22,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final DriverStatusController driverStatusController =
-      Get.put(DriverStatusController());
+  final DriverStatusController driverStatusController = Get.put(
+    DriverStatusController(),
+  );
   final LocationController locationController = Get.put(LocationController());
   GoogleMapController? mapController;
   final String googleAPIKey = 'AIzaSyDGnDHGbAKJl_B7A4O9hgc0LNpF_X9VGCs';
@@ -71,8 +72,9 @@ class _HomeScreenState extends State<HomeScreen> {
       if (pickupLatLng != null) {
         getDirections(null, pickupLatLng!);
 
-        locationController
-            .startGeoFenceMonitoring(pickupLatLng!); //start geo-fencing
+        locationController.startGeoFenceMonitoring(
+          pickupLatLng!,
+        ); //start geo-fencing
       }
     }
 
@@ -83,9 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if (pickupLatLng != null) {
           getDirections(position, pickupLatLng!);
         }
-        mapController?.animateCamera(
-          CameraUpdate.newLatLng(position),
-        );
+        mapController?.animateCamera(CameraUpdate.newLatLng(position));
       }
     });
 
@@ -133,7 +133,11 @@ class _HomeScreenState extends State<HomeScreen> {
   double _calculateDistance(LatLng pos1, LatLng pos2) {
     // Simple distance calculation (in meters)
     return Geolocator.distanceBetween(
-        pos1.latitude, pos1.longitude, pos2.latitude, pos2.longitude);
+      pos1.latitude,
+      pos1.longitude,
+      pos2.latitude,
+      pos2.longitude,
+    );
   }
 
   void getDirections(LatLng? origin, LatLng destination) async {
@@ -224,7 +228,7 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: const Color(0xFFB42318),
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
-          "Driver Status",
+          "Driver Ryde",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         actions: [
@@ -255,8 +259,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   driverStatusController.updateStatus(isOffline ? '0' : '1');
                 },
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: isOffline ? Colors.blueGrey : Colors.green,
                     borderRadius: BorderRadius.circular(20),
@@ -335,8 +341,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     curve: Curves.easeInOut,
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius:
-                          BorderRadius.circular(_isExpanded ? 20 : 50),
+                      borderRadius: BorderRadius.circular(
+                        _isExpanded ? 20 : 50,
+                      ),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.2),
@@ -399,7 +406,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           if (locationController.hasArrivedAtPickup)
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 8),
+                                horizontal: 12,
+                                vertical: 8,
+                              ),
                               margin: const EdgeInsets.only(bottom: 12),
                               decoration: BoxDecoration(
                                 color: Colors.green.withOpacity(0.1),
@@ -408,8 +417,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               child: Row(
                                 children: const [
-                                  Icon(Icons.check_circle,
-                                      color: Colors.green, size: 20),
+                                  Icon(
+                                    Icons.check_circle,
+                                    color: Colors.green,
+                                    size: 20,
+                                  ),
                                   SizedBox(width: 8),
                                   Text(
                                     'Arrived at pickup location',
@@ -457,7 +469,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: [
                               Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 6),
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
                                 decoration: BoxDecoration(
                                   color: Colors.grey[100],
                                   borderRadius: BorderRadius.circular(20),
@@ -492,7 +506,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                             ? Colors.green
                                             : Colors.black,
                                     padding: const EdgeInsets.symmetric(
-                                        vertical: 12),
+                                      vertical: 12,
+                                    ),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
                                     ),
@@ -546,11 +561,7 @@ Widget _buildLocationRow({
   return Row(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Icon(
-        icon,
-        color: iconColor,
-        size: isFirst ? 18 : 20,
-      ),
+      Icon(icon, color: iconColor, size: isFirst ? 18 : 20),
       const SizedBox(width: 12),
       Expanded(
         child: Text(

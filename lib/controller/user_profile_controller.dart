@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:HrCabDriver/Api/ApiEndPoints/api_end_points.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:HrCabDriver/models/user_profile_model.dart';
+import 'package:HrCabDriver/Api/models/user_profile_model.dart';
 import 'package:http/http.dart' as http;
 
 class UserProfileController extends GetxController {
@@ -34,8 +34,9 @@ class UserProfileController extends GetxController {
 
         if (jsonResponse['result'] == true &&
             jsonResponse['driver_profile'] != null) {
-          driverProfile.value =
-              DriverProfile.fromJson(jsonResponse['driver_profile']);
+          driverProfile.value = DriverProfile.fromJson(
+            jsonResponse['driver_profile'],
+          );
         } else {
           Get.snackbar("Error", "Profile not found");
         }
@@ -67,13 +68,16 @@ class UserProfileController extends GetxController {
             actions: [
               OutlinedButton(
                 onPressed: () => Get.back(result: false),
-                child: const Text("Cancel",
-                    style: TextStyle(color: Color(0xFFB42318))),
+                child: const Text(
+                  "Cancel",
+                  style: TextStyle(color: Color(0xFFB42318)),
+                ),
               ),
               ElevatedButton(
                 onPressed: () => Get.back(result: true),
                 style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFFB42318)),
+                  backgroundColor: Color(0xFFB42318),
+                ),
                 child: const Text(
                   "Sign Out",
                   style: TextStyle(color: Colors.brown),

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:HrCabDriver/models/ride_request_model.dart';
-import 'package:HrCabDriver/models/user_profile_model.dart';
+import 'package:HrCabDriver/Api/models/ride_request_model.dart';
+import 'package:HrCabDriver/Api/models/user_profile_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
@@ -350,12 +350,15 @@ class HomeScreenController extends GetxController {
 
     PolylinePoints polylinePoints = PolylinePoints();
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-        request: PolylineRequest(
-            origin:
-                PointLatLng(driverLatLng!.latitude, driverLatLng!.longitude),
-            destination:
-                PointLatLng(pickupLatLng!.latitude, pickupLatLng!.longitude),
-            mode: TravelMode.driving));
+      request: PolylineRequest(
+        origin: PointLatLng(driverLatLng!.latitude, driverLatLng!.longitude),
+        destination: PointLatLng(
+          pickupLatLng!.latitude,
+          pickupLatLng!.longitude,
+        ),
+        mode: TravelMode.driving,
+      ),
+    );
 
     if (result.points.isNotEmpty) {
       polylineCoordinates.clear();

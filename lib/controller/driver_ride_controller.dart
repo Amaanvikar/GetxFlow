@@ -1,6 +1,6 @@
 import 'package:HrCabDriver/Api/ApiEndPoints/api_end_points.dart';
 import 'package:get/get.dart';
-import 'package:HrCabDriver/models/ride_request_model.dart';
+import 'package:HrCabDriver/Api/models/ride_request_model.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -27,10 +27,11 @@ class DriverRideController extends GetxController {
     String status = selectedStatus.value.toString();
     // print("Fetching rides for status: ${selectedStatus.value}");
 
-    filteredRideList.value = allRides.where((ride) {
-      String bookingStatus = ride.bookingStatus.toString();
-      return bookingStatus == status || status == '5';
-    }).toList();
+    filteredRideList.value =
+        allRides.where((ride) {
+          String bookingStatus = ride.bookingStatus.toString();
+          return bookingStatus == status || status == '5';
+        }).toList();
 
     // print("Filtered List Length: ${filteredRideList.length}");
 
@@ -39,18 +40,22 @@ class DriverRideController extends GetxController {
 
       var url = Uri.parse(ApiEndPoints.rideList);
       // Uri.parse("https://windhans.com/2022/hrcabs/getDriverRideList");
-      var response = await http.post(url, body: {
-        'driver_id': '8',
-        'is_book': selectedStatus.value.toString(),
-        'page': '1',
-      });
+      var response = await http.post(
+        url,
+        body: {
+          'driver_id': '8',
+          'is_book': selectedStatus.value.toString(),
+          'page': '1',
+        },
+      );
 
       if (response.statusCode == 200) {
         // print("API Response: ${response.body}");
         var data = json.decode(response.body);
         if (data['result'] == true && data['rides'] != null) {
           var rides = List<RideRequest>.from(
-              data['rides'].map((x) => RideRequest.fromMap(x)));
+            data['rides'].map((x) => RideRequest.fromMap(x)),
+          );
           rideList.assignAll(rides);
         } else {
           print("No rides found");
@@ -71,7 +76,8 @@ class DriverRideController extends GetxController {
       filteredRideList.assignAll(rideList);
     } else {
       filteredRideList.assignAll(
-          rideList.where((ride) => ride.bookingStatus == status).toList());
+        rideList.where((ride) => ride.bookingStatus == status).toList(),
+      );
     }
   }
 

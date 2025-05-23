@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:HrCabDriver/controller/drawer_controller.dart';
 import 'package:HrCabDriver/controller/login_controller.dart';
 import 'package:HrCabDriver/controller/user_profile_controller.dart';
-import 'package:HrCabDriver/models/user_profile_model.dart';
+import 'package:HrCabDriver/Api/models/user_profile_model.dart';
 import 'package:HrCabDriver/screens/map_screen.dart';
 
 class DrawerWidget extends StatefulWidget {
@@ -17,8 +17,9 @@ class DrawerWidget extends StatefulWidget {
 class _DrawerWidgetState extends State<DrawerWidget> {
   final LoginController loginController = Get.put(LoginController());
   final DrawerLogicController controller = Get.put(DrawerLogicController());
-  final UserProfileController driverProfileController =
-      Get.put(UserProfileController());
+  final UserProfileController driverProfileController = Get.put(
+    UserProfileController(),
+  );
   Rxn<DriverProfile> driverProfile = Rxn<DriverProfile>();
 
   @override
@@ -60,10 +61,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                         const SizedBox(height: 2),
                         Text(
                           profile?.email ?? '',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.black,
-                          ),
+                          style: TextStyle(fontSize: 16, color: Colors.black),
                         ),
                       ],
                     ),
@@ -83,66 +81,42 @@ class _DrawerWidgetState extends State<DrawerWidget> {
           }),
           // Drawer Items
           ListTile(
-            title: Text(
-              'Home',
-              style: TextStyle(fontSize: 16),
-            ),
+            title: Text('Home', style: TextStyle(fontSize: 16)),
             leading: Icon(Icons.home),
             onTap: () => Get.back(),
           ),
           ListTile(
-            title: Text(
-              'Profile',
-              style: TextStyle(fontSize: 16),
-            ),
+            title: Text('Profile', style: TextStyle(fontSize: 16)),
             leading: Icon(Icons.person),
             onTap: () => Get.toNamed('/profile'),
           ),
           ListTile(
-            title: Text(
-              'Ride Booking',
-              style: TextStyle(fontSize: 16),
-            ),
+            title: Text('Ride Booking', style: TextStyle(fontSize: 16)),
             leading: Icon(Icons.book_online),
             onTap: () => Get.toNamed('/booking'),
           ),
           ListTile(
-            title: Text(
-              'Notification',
-              style: TextStyle(fontSize: 16),
-            ),
+            title: Text('Notification', style: TextStyle(fontSize: 16)),
             leading: Icon(Icons.notification_add),
             onTap: () => Get.toNamed('/notifications'),
           ),
           ListTile(
-            title: Text(
-              'Event',
-              style: TextStyle(fontSize: 16),
-            ),
+            title: Text('Event', style: TextStyle(fontSize: 16)),
             leading: Icon(Icons.event),
             onTap: () => Get.toNamed('/event'),
           ),
           ListTile(
-            title: Text(
-              'Settings',
-              style: TextStyle(fontSize: 16),
-            ),
+            title: Text('Settings', style: TextStyle(fontSize: 16)),
             leading: Icon(Icons.settings),
             onTap: () => Get.toNamed('/settings'),
           ),
           ListTile(
-            title: Text(
-              'Map Screen',
-              style: TextStyle(fontSize: 16),
-            ),
+            title: Text('Map Screen', style: TextStyle(fontSize: 16)),
             leading: Icon(Icons.directions),
             onTap: () => Get.to(RouteMapScreen()),
           ),
           ListTile(
-            title: Text(
-              'Logout',
-              style: TextStyle(fontSize: 16),
-            ),
+            title: Text('Logout', style: TextStyle(fontSize: 16)),
             leading: Icon(Icons.logout),
             onTap: () => loginController.showLogoutConfirmation(context),
           ),
@@ -160,11 +134,11 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   width: 100,
                   fit: BoxFit.contain,
                 ),
-                SizedBox(
-                  height: 20,
+                SizedBox(height: 20),
+                Text(
+                  'Powered by Windhans Technology',
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
                 ),
-                Text('Powered by Windhans Technology',
-                    style: TextStyle(fontSize: 12, color: Colors.grey)),
                 SizedBox(height: 20),
               ],
             ),

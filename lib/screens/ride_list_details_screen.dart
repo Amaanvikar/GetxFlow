@@ -6,7 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:HrCabDriver/controller/location_controller.dart';
-import 'package:HrCabDriver/models/ride_request_model.dart';
+import 'package:HrCabDriver/Api/models/ride_request_model.dart';
 import 'package:HrCabDriver/screens/homescreen.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -208,11 +208,17 @@ class _RideListDetailsScreenState extends State<RideListDetailsScreen> {
       appBar: AppBar(
         backgroundColor: Color(0xFFB42318),
         centerTitle: true,
-        title: Text('Ride Details',
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+        title: Text(
+          'Ride Details',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        ),
         leading: IconButton(
-          icon: SvgPicture.asset('assets/images/img_ic_down.svg',
-              color: Colors.white, height: 24, width: 24),
+          icon: SvgPicture.asset(
+            'assets/images/img_ic_down.svg',
+            color: Colors.white,
+            height: 24,
+            width: 24,
+          ),
           onPressed: () => Get.back(),
         ),
         actions: [
@@ -221,75 +227,79 @@ class _RideListDetailsScreenState extends State<RideListDetailsScreen> {
             onPressed: () {
               Get.to(HomeScreen());
             },
-          )
+          ),
         ],
       ),
-      body: (isLoading)
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
-          : ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                _buildProfileHeader(),
-                SizedBox(
-                  height: 300,
-                  child: GoogleMap(
-                    initialCameraPosition: CameraPosition(
-                      target: driverLatLng!,
-                      // target: pickupLatLng ?? LatLng(0, 0),
-                      zoom: 16,
+      body:
+          (isLoading)
+              ? Center(child: CircularProgressIndicator())
+              : ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  _buildProfileHeader(),
+                  SizedBox(
+                    height: 300,
+                    child: GoogleMap(
+                      initialCameraPosition: CameraPosition(
+                        target: driverLatLng!,
+                        // target: pickupLatLng ?? LatLng(0, 0),
+                        zoom: 16,
+                      ),
+                      onMapCreated: (controller) {
+                        mapController = controller;
+                      },
+                      polylines: polylines,
+                      // markers: markers,
+                      myLocationEnabled: true,
+                      myLocationButtonEnabled: true,
+                      markers: {
+                        Marker(
+                          markerId: const MarkerId('driver'),
+                          position: driverLatLng!,
+                          infoWindow: const InfoWindow(
+                            title: 'Driver Start Location',
+                          ),
+                        ),
+                        Marker(
+                          markerId: const MarkerId('pickup'),
+                          position: pickupLatLng!,
+                          infoWindow: const InfoWindow(
+                            title: 'Pickup Location',
+                          ),
+                        ),
+                      },
                     ),
-                    onMapCreated: (controller) {
-                      mapController = controller;
-                    },
-                    polylines: polylines,
-                    // markers: markers,
-                    myLocationEnabled: true,
-                    myLocationButtonEnabled: true,
-                    markers: {
-                      Marker(
-                        markerId: const MarkerId('driver'),
-                        position: driverLatLng!,
-                        infoWindow:
-                            const InfoWindow(title: 'Driver Start Location'),
-                      ),
-                      Marker(
-                        markerId: const MarkerId('pickup'),
-                        position: pickupLatLng!,
-                        infoWindow: const InfoWindow(title: 'Pickup Location'),
-                      ),
-                    },
                   ),
-                ),
-                const SizedBox(height: 16),
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 10,
-                        offset: Offset(0, 4),
-                      ),
-                    ],
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 10,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: ListView.separated(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: _rideDataMap.length,
+                      separatorBuilder: (_, __) => Divider(),
+                      itemBuilder: (context, index) {
+                        final entry = _rideDataMap.entries.elementAt(index);
+                        return _buildRow(
+                          entry.key,
+                          entry.value?.toString() ?? '',
+                        );
+                      },
+                    ),
                   ),
-                  child: ListView.separated(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: _rideDataMap.length,
-                    separatorBuilder: (_, __) => Divider(),
-                    itemBuilder: (context, index) {
-                      final entry = _rideDataMap.entries.elementAt(index);
-                      return _buildRow(
-                          entry.key, entry.value?.toString() ?? '');
-                    },
-                  ),
-                ),
-              ],
-            ),
+                ],
+              ),
     );
   }
 
@@ -334,16 +344,17 @@ class _RideListDetailsScreenState extends State<RideListDetailsScreen> {
           const SizedBox(width: 8),
           Expanded(
             flex: 3,
-            child: isEditMode
-                ? TextFormField(
-                    initialValue: value,
-                    onChanged: (newVal) {
-                      setState(() {
-                        _rideDataMap[title] = newVal;
-                      });
-                    },
-                  )
-                : Text(value, style: TextStyle(fontSize: 14)),
+            child:
+                isEditMode
+                    ? TextFormField(
+                      initialValue: value,
+                      onChanged: (newVal) {
+                        setState(() {
+                          _rideDataMap[title] = newVal;
+                        });
+                      },
+                    )
+                    : Text(value, style: TextStyle(fontSize: 14)),
           ),
         ],
       ),

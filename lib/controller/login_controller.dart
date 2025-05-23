@@ -3,9 +3,9 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:HrCabDriver/firebase/push_notifications.dart';
-import 'package:HrCabDriver/models/user_profile_model.dart';
+import 'package:HrCabDriver/Api/models/user_profile_model.dart';
 import 'package:HrCabDriver/screens/homescreen.dart';
-import 'package:HrCabDriver/screens/login.dart';
+import 'package:HrCabDriver/Auth/login.dart';
 import 'package:HrCabDriver/utils/pref_utils.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -85,15 +85,18 @@ class LoginController extends GetxController {
         data['user_details'].containsKey('reg_id')) {
       print("No token received, using reg_id instead.");
       await prefs.setString(
-          'userToken', data['user_details']['reg_id'].toString());
+        'userToken',
+        data['user_details']['reg_id'].toString(),
+      );
     }
   }
 
   // Check if user is logged in
   Future<void> checkUserSession() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token =
-        prefs.getString('userToken'); // Retrieves stored token or reg_id
+    String? token = prefs.getString(
+      'userToken',
+    ); // Retrieves stored token or reg_id
 
     print("Stored Token (reg_id as fallback): $token"); // Debugging
 

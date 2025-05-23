@@ -4,7 +4,7 @@ import 'package:HrCabDriver/Api/ApiEndPoints/api_end_points.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:HrCabDriver/controller/location_controller.dart';
-import 'package:HrCabDriver/models/accept_ride_model.dart';
+import 'package:HrCabDriver/Api/models/accept_ride_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 
@@ -49,8 +49,9 @@ class AcceptRideController extends GetxController {
     };
 
     try {
-      final response =
-          await http.post(url, body: body).timeout(const Duration(seconds: 30));
+      final response = await http
+          .post(url, body: body)
+          .timeout(const Duration(seconds: 30));
       isLoading.value = false;
 
       debugPrint("Response status: ${response.statusCode}");
@@ -142,7 +143,9 @@ class AcceptRideController extends GetxController {
   }
 
   Future<List<LatLng>> _getRouteDirections(
-      LatLng origin, LatLng destination) async {
+    LatLng origin,
+    LatLng destination,
+  ) async {
     // Here you would typically call a Directions API like Google Maps Directions
     // For now, we'll just return a straight line between points
 

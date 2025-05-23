@@ -4,16 +4,16 @@ import 'package:HrCabDriver/controller/drawer_controller.dart';
 import 'package:HrCabDriver/controller/home_screen_controller.dart';
 import 'package:HrCabDriver/controller/login_controller.dart';
 import 'package:HrCabDriver/firebase/firebase_initializer.dart';
-import 'package:HrCabDriver/models/ride_request_model.dart';
+import 'package:HrCabDriver/Api/models/ride_request_model.dart';
 import 'package:HrCabDriver/screens/driver_ride_list_screen.dart';
 import 'package:HrCabDriver/screens/events_screen.dart';
 import 'package:HrCabDriver/screens/homescreen.dart';
 import 'package:HrCabDriver/screens/location_screen.dart';
 // import 'package:get_storage/get_storage.dart';
-import 'package:HrCabDriver/screens/login.dart';
+import 'package:HrCabDriver/Auth/login.dart';
 import 'package:HrCabDriver/screens/notification_screen.dart';
-import 'package:HrCabDriver/screens/user_profile_screen.dart';
-import 'package:HrCabDriver/screens/splash.dart';
+import 'package:HrCabDriver/Auth/user_profile_screen.dart';
+import 'package:HrCabDriver/Auth/splash.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 Future<void> main() async {
@@ -59,10 +59,11 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/profile', page: () => UserProfilePage()),
         GetPage(name: '/location', page: () => LocationScreen()),
         GetPage(
-            name: '/notifications',
-            page: () => NotificationScreen(
-                // payload: Get.arguments,
-                )),
+          name: '/notifications',
+          page: () => NotificationScreen(
+              // payload: Get.arguments,
+              ),
+        ),
         // GetPage(name: '/driverEndRoute', page: () => DriverEndRoute())
       ],
     );
