@@ -5,10 +5,10 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:getxflow/common/widget/drawer_widget.dart';
-import 'package:getxflow/controller/driver_status_controller.dart';
-import 'package:getxflow/controller/location_controller.dart';
-import 'package:getxflow/models/ride_request_model.dart';
+import 'package:HrCabDriver/common/widget/drawer_widget.dart';
+import 'package:HrCabDriver/controller/driver_status_controller.dart';
+import 'package:HrCabDriver/controller/location_controller.dart';
+import 'package:HrCabDriver/models/ride_request_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:location/location.dart';
@@ -175,8 +175,11 @@ class _HomeScreenState extends State<HomeScreen> {
           Polyline(
             polylineId: PolylineId('route'),
             points: polylineCoordinates,
-            width: 5,
-            color: Colors.blue,
+            width: 6,
+            color: Colors.blueAccent,
+            jointType: JointType.round,
+            startCap: Cap.roundCap,
+            endCap: Cap.buttCap,
           ),
         );
       });

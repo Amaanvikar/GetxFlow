@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-import 'package:getxflow/screens/notification_screen.dart';
-import 'package:getxflow/utils/pref_utils.dart';
+import 'package:HrCabDriver/screens/notification_screen.dart';
+import 'package:HrCabDriver/utils/pref_utils.dart';
 
 class PushNotifications {
   static final _firebaseMessaging = FirebaseMessaging.instance;

@@ -12,7 +12,7 @@ package="com.wind.hrcabdriver">
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <application
-        android:label="getxflow"
+        android:label="HrCabDriver"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:getxflow/controller/accept_ride_controller.dart';
-import 'package:getxflow/controller/location_controller.dart';
+import 'package:HrCabDriver/controller/accept_ride_controller.dart';
+import 'package:HrCabDriver/controller/location_controller.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:convert'; // For parsing the JSON string
 

@@ -3,8 +3,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/instance_manager.dart';
 import 'package:get/route_manager.dart';
-import 'package:getxflow/controller/event_screen_controller.dart';
-import 'package:getxflow/screens/homescreen.dart';
+import 'package:HrCabDriver/controller/event_screen_controller.dart';
+import 'package:HrCabDriver/screens/homescreen.dart';
 
 class EventScreen extends StatefulWidget {
   const EventScreen({super.key});

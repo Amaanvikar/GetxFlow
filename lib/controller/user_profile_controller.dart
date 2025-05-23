@@ -1,7 +1,8 @@
 import 'dart:convert';
+import 'package:HrCabDriver/Api/ApiEndPoints/api_end_points.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:getxflow/models/user_profile_model.dart';
+import 'package:HrCabDriver/models/user_profile_model.dart';
 import 'package:http/http.dart' as http;
 
 class UserProfileController extends GetxController {
@@ -23,7 +24,8 @@ class UserProfileController extends GetxController {
 
     try {
       final response = await http.post(
-        Uri.parse('https://windhans.com/2022/hrcabs/driverProfile'),
+        Uri.parse(ApiEndPoints.driverProfile),
+        // Uri.parse('https://windhans.com/2022/hrcabs/driverProfile'),
         body: {'driver_id': '8'},
       );
 

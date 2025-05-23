@@ -1,6 +1,6 @@
 {
-    "name": "getxflow",
-    "short_name": "getxflow",
+    "name": "HrCabDriver",
+    "short_name": "HrCabDriver",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:getxflow/controller/driver_ride_controller.dart';
-import 'package:getxflow/screens/homescreen.dart';
+import 'package:HrCabDriver/controller/driver_ride_controller.dart';
+import 'package:HrCabDriver/screens/homescreen.dart';
 
 class DriverRideListScreen extends StatefulWidget {
   const DriverRideListScreen({super.key});
@@ -133,6 +133,9 @@ class _DriverRideListScreenState extends State<DriverRideListScreen> {
           // Ride List
           Expanded(
             child: Obx(() {
+              if (controller.isLoading.value) {
+                return const Center(child: CircularProgressIndicator());
+              }
               var filteredRides = getFilteredRides();
               if (filteredRides.isEmpty) {
                 return const Center(child: Text("No rides found"));

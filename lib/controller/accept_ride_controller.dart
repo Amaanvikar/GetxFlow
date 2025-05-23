@@ -1,9 +1,10 @@
 import 'dart:convert';
 
+import 'package:HrCabDriver/Api/ApiEndPoints/api_end_points.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:getxflow/controller/location_controller.dart';
-import 'package:getxflow/models/accept_ride_model.dart';
+import 'package:HrCabDriver/controller/location_controller.dart';
+import 'package:HrCabDriver/models/accept_ride_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 
@@ -38,7 +39,8 @@ class AcceptRideController extends GetxController {
 
     isLoading.value = true;
 
-    final url = Uri.parse("https://windhans.com/2022/hrcabs/acceptRideDriver");
+    final url = Uri.parse(ApiEndPoints.acceptRide);
+    // Uri.parse("https://windhans.com/2022/hrcabs/acceptRideDriver");
     final body = {
       'vd_log_id': vdLogId,
       'ride_return_log_id': rideReturnLogId,

@@ -6,14 +6,14 @@
     [
       "/Users/windhans/Library/Android/sdk/cmake/3.22.1/bin/ninja",
       "-C",
-      "/Users/windhans/Desktop/HrCabDriver/GetxFlow/android/app/.cxx/Debug/z4o6l6b7/x86",
+      "/Users/windhans/Desktop/HrCabDriver/HrCabDriver/android/app/.cxx/Debug/z4o6l6b7/x86",
       "clean"
     ]
   ],
   "buildTargetsCommandComponents": [
     "/Users/windhans/Library/Android/sdk/cmake/3.22.1/bin/ninja",
     "-C",
-    "/Users/windhans/Desktop/HrCabDriver/GetxFlow/android/app/.cxx/Debug/z4o6l6b7/x86",
+    "/Users/windhans/Desktop/HrCabDriver/HrCabDriver/android/app/.cxx/Debug/z4o6l6b7/x86",
     "{LIST_OF_TARGETS_TO_BUILD}"
   ],
   "libraries": {}

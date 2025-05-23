@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:getxflow/firebase/firebase_options.dart';
-import 'package:getxflow/firebase/push_notifications.dart';
+import 'package:HrCabDriver/firebase/firebase_options.dart';
+import 'package:HrCabDriver/firebase/push_notifications.dart';
 
 @pragma('vm:entry-point')
 Future<void> firebaseBackgroundMessage(RemoteMessage message) async {

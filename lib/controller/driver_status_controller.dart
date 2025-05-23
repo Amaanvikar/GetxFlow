@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:HrCabDriver/Api/ApiEndPoints/api_end_points.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
@@ -6,6 +7,7 @@ import 'package:geolocator/geolocator.dart';
 class DriverStatusController extends GetxController {
   Rx<DriverStatus> driverStatus = DriverStatus(status: '', message: '').obs;
   var selectedStatus = '1'.obs;
+  var selectedLogId = ''.obs;
   var isLoading = true.obs;
   var showFilters = false.obs;
 
@@ -25,7 +27,8 @@ class DriverStatusController extends GetxController {
 
       await updateCurrentLocation();
 
-      var url = Uri.parse("https://windhans.com/2022/hrcabs/getDriverStatus");
+      var url = Uri.parse(ApiEndPoints.driverVehicleLogStatus);
+      // Uri.parse("https://windhans.com/2022/hrcabs/getDriverStatus");
       print({
         'status': selectedStatus.value,
         'current_vd_lat': currentLatitude.value,
@@ -33,7 +36,7 @@ class DriverStatusController extends GetxController {
       });
 
       var response = await http.post(url, body: {
-        'vd_log_id': '2',
+        'vd_log_id': selectedLogId.value,
         'status': selectedStatus.value,
         'current_vd_lat': currentLatitude.value,
         'current_vd_long': currentLongitude.value,

@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "D:/flutter/getxflow/android/app/.cxx/RelWithDebInfo/3z36c37i/arm64-v8a/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "D:/flutter/HrCabDriver/android/app/.cxx/RelWithDebInfo/3z36c37i/arm64-v8a/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

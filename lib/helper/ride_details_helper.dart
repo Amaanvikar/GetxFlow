@@ -1,4 +1,4 @@
-// import 'package:getxflow/models/ride_request_model.dart';
+// import 'package:HrCabDriver/models/ride_request_model.dart';
 
 // class RideDetailsHelper {
 // // ride_helpers.dart

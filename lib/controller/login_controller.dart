@@ -2,11 +2,11 @@ import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:getxflow/firebase/push_notifications.dart';
-import 'package:getxflow/models/user_profile_model.dart';
-import 'package:getxflow/screens/homescreen.dart';
-import 'package:getxflow/screens/login.dart';
-import 'package:getxflow/utils/pref_utils.dart';
+import 'package:HrCabDriver/firebase/push_notifications.dart';
+import 'package:HrCabDriver/models/user_profile_model.dart';
+import 'package:HrCabDriver/screens/homescreen.dart';
+import 'package:HrCabDriver/screens/login.dart';
+import 'package:HrCabDriver/utils/pref_utils.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -49,7 +49,8 @@ class LoginController extends GetxController {
       print('Login API Body: $body');
 
       final response = await post(
-        Uri.parse("https://windhans.com/2022/hrcabs/driverLogin"),
+        Uri.parse('ApiEndPoints.driverLogin'),
+        // Uri.parse("https://windhans.com/2022/hrcabs/driverLogin"),
         body: body,
       );
 

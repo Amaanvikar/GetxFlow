@@ -9,10 +9,10 @@
 -DCMAKE_ANDROID_NDK=C:\Users\amaan\AppData\Local\Android\sdk\ndk\26.3.11579264
 -DCMAKE_TOOLCHAIN_FILE=C:\Users\amaan\AppData\Local\Android\sdk\ndk\26.3.11579264\build\cmake\android.toolchain.cmake
 -DCMAKE_MAKE_PROGRAM=C:\Users\amaan\AppData\Local\Android\sdk\cmake\3.22.1\bin\ninja.exe
--DCMAKE_LIBRARY_OUTPUT_DIRECTORY=D:\flutter\getxflow\build\app\intermediates\cxx\RelWithDebInfo\3z36c37i\obj\x86
--DCMAKE_RUNTIME_OUTPUT_DIRECTORY=D:\flutter\getxflow\build\app\intermediates\cxx\RelWithDebInfo\3z36c37i\obj\x86
+-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=D:\flutter\HrCabDriver\build\app\intermediates\cxx\RelWithDebInfo\3z36c37i\obj\x86
+-DCMAKE_RUNTIME_OUTPUT_DIRECTORY=D:\flutter\HrCabDriver\build\app\intermediates\cxx\RelWithDebInfo\3z36c37i\obj\x86
 -DCMAKE_BUILD_TYPE=RelWithDebInfo
--BD:\flutter\getxflow\android\app\.cxx\RelWithDebInfo\3z36c37i\x86
+-BD:\flutter\HrCabDriver\android\app\.cxx\RelWithDebInfo\3z36c37i\x86
 -GNinja
 -Wno-dev
 --no-warn-unused-cli

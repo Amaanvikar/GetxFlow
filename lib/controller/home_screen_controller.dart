@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:getxflow/models/ride_request_model.dart';
-import 'package:getxflow/models/user_profile_model.dart';
+import 'package:HrCabDriver/models/ride_request_model.dart';
+import 'package:HrCabDriver/models/user_profile_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 

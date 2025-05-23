@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:getxflow/controller/user_profile_controller.dart';
-import 'package:getxflow/screens/homescreen.dart';
-import 'package:getxflow/screens/login.dart';
+import 'package:HrCabDriver/controller/user_profile_controller.dart';
+import 'package:HrCabDriver/screens/homescreen.dart';
+import 'package:HrCabDriver/screens/login.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

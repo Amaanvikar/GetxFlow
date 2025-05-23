@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:getxflow/controller/login_controller.dart';
+import 'package:HrCabDriver/controller/login_controller.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

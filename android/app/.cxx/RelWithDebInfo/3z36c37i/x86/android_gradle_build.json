@@ -6,14 +6,14 @@
     [
       "C:\\Users\\amaan\\AppData\\Local\\Android\\sdk\\cmake\\3.22.1\\bin\\ninja.exe",
       "-C",
-      "D:\\flutter\\getxflow\\android\\app\\.cxx\\RelWithDebInfo\\3z36c37i\\x86",
+      "D:\\flutter\\HrCabDriver\\android\\app\\.cxx\\RelWithDebInfo\\3z36c37i\\x86",
       "clean"
     ]
   ],
   "buildTargetsCommandComponents": [
     "C:\\Users\\amaan\\AppData\\Local\\Android\\sdk\\cmake\\3.22.1\\bin\\ninja.exe",
     "-C",
-    "D:\\flutter\\getxflow\\android\\app\\.cxx\\RelWithDebInfo\\3z36c37i\\x86",
+    "D:\\flutter\\HrCabDriver\\android\\app\\.cxx\\RelWithDebInfo\\3z36c37i\\x86",
     "{LIST_OF_TARGETS_TO_BUILD}"
   ],
   "libraries": {},

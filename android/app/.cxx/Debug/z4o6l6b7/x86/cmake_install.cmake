@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/Users/windhans/Desktop/HrCabDriver/GetxFlow/android/app/.cxx/Debug/z4o6l6b7/x86/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/Users/windhans/Desktop/HrCabDriver/HrCabDriver/android/app/.cxx/Debug/z4o6l6b7/x86/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

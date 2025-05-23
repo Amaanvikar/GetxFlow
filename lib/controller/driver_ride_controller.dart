@@ -1,5 +1,6 @@
+import 'package:HrCabDriver/Api/ApiEndPoints/api_end_points.dart';
 import 'package:get/get.dart';
-import 'package:getxflow/models/ride_request_model.dart';
+import 'package:HrCabDriver/models/ride_request_model.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -35,7 +36,9 @@ class DriverRideController extends GetxController {
 
     try {
       isLoading(true);
-      var url = Uri.parse("https://windhans.com/2022/hrcabs/getDriverRideList");
+
+      var url = Uri.parse(ApiEndPoints.rideList);
+      // Uri.parse("https://windhans.com/2022/hrcabs/getDriverRideList");
       var response = await http.post(url, body: {
         'driver_id': '8',
         'is_book': selectedStatus.value.toString(),
